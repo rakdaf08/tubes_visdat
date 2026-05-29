@@ -32,7 +32,10 @@ from utils.ui import (
     section_header,
     page_footer,
     PLOTLY_LAYOUT,
+    PLOTLY_CONFIG,
     CRISIS_LINE,
+    filter_summary,
+    chart_note,
 )
 from utils.data_loader import load_data, passage_mean
 
@@ -46,11 +49,23 @@ PASSAGES = (
     sorted(df_ship["Passage"].unique().tolist()) if "Passage" in df_ship.columns else []
 )
 CRISIS_DATE = pd.Timestamp("2023-11-01")
+DEFAULT_PASSAGES = [
+    p for p in ["Bab-Al Mandab Strait", "Suez", "Cape of Good Hope"] if p in PASSAGES
+]
+if not DEFAULT_PASSAGES:
+    DEFAULT_PASSAGES = PASSAGES[:3]
+
+
+def reset_maritime_filters():
+    st.session_state.maritime_passages = DEFAULT_PASSAGES
 
 # ── Sidebar — brand + footer ──────────────
-# with st.sidebar:
-#     sidebar_brand()
-#     sidebar_footer()
+with st.sidebar:
+    sidebar_brand()
+    st.page_link("main.py", label="Overview", icon="🌊")
+    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis", icon="🌍")
+    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact", icon="🚢")
+    sidebar_footer()
 
 # ── Page header ───────────────────────────────────────────────────────────
 st.markdown(
@@ -82,24 +97,30 @@ if not PASSAGES:
     )
     st.stop()
 
-# ── Page-local filter bar ─────────────────────────────────────────────────
-st.markdown("<div class='filter-bar'>", unsafe_allow_html=True)
-st.markdown(
-    "<div class='filter-bar-label'>🛳️ Page Filters — Maritime Passages</div>",
-    unsafe_allow_html=True,
-)
+# ── Page-local filters ────────────────────────────────────────────────────
+filter_title, filter_reset = st.columns([4, 1])
+with filter_title:
+    st.markdown(
+        "<div class='filter-bar-label'>🛳️ Page Filters — Maritime Passages</div>",
+        unsafe_allow_html=True,
+    )
+with filter_reset:
+    st.button("Reset Filters", on_click=reset_maritime_filters, key="reset_maritime")
 
-default_passages = [
-    p for p in ["Bab-Al Mandab Strait", "Suez", "Cape of Good Hope"] if p in PASSAGES
-]
 selected_passages = st.multiselect(
     "Select Passages to Display",
     options=PASSAGES,
-    default=default_passages if default_passages else PASSAGES[:3],
+    default=DEFAULT_PASSAGES,
     key="maritime_passages",
 )
 
-st.markdown("</div>", unsafe_allow_html=True)
+filter_summary(
+    [
+        ("Passages", f"{len(selected_passages) or len(PASSAGES)} selected"),
+        ("Ship data", f"{df_ship['date'].min():%b %Y} - {df_ship['date'].max():%b %Y}"),
+        ("Crisis marker", "Nov 2023"),
+    ]
+)
 
 # ── Resolve active passages ────────────────────────────────────────────────
 active_passages = selected_passages if selected_passages else PASSAGES
@@ -121,6 +142,9 @@ section_header(
     "Maritime Route Disruption",
     "Suez Canal traffic decline vs Cape of Good Hope surge — "
     "direct economic impact of the Red Sea Crisis",
+)
+chart_note(
+    "Hover across the same week to compare routes. The red marker anchors the Houthi crisis onset so the pre/post shift is visible without changing pages."
 )
 
 COLORS_PASSAGE = {
@@ -169,7 +193,7 @@ fig_line.update_layout(
     yaxis=dict(gridcolor="#152035", title="Number of Crossings"),
     hovermode="x unified",
 )
-st.plotly_chart(fig_line, use_container_width=True)
+st.plotly_chart(fig_line, width="stretch", config=PLOTLY_CONFIG)
 
 # Insight box
 if suez_change != 0 and cape_change != 0:
@@ -196,51 +220,68 @@ section_header(
     "Traffic Share: Pre vs Post-Crisis",
     "Distribution of ship crossings between Red Sea routes before and after Nov 2023",
 )
+chart_note(
+    "A 100% stacked comparison makes the route-share shift easier to read than separate donut charts."
+)
 
 red_sea_routes = ["Suez", "Bab-Al Mandab Strait", "Cape of Good Hope"]
 donut_routes = [r for r in red_sea_routes if r in active_passages]
 
-col_donut1, col_donut2, col_qbar = st.columns([1, 1, 2])
-crisis_phases = ["Pre-Crisis", "Post-Crisis"]
+col_share, col_qbar = st.columns([1, 2])
 
-for phase, col in zip(crisis_phases, [col_donut1, col_donut2]):
-    with col:
-        donut_data = (
-            df_ship[
-                (df_ship["Passage"].isin(donut_routes))
-                & (df_ship["CRISIS_PHASE"] == phase)
-            ]
-            .groupby("Passage")["Number of crossings"]
-            .sum()
-            .reset_index()
+with col_share:
+    share_data = (
+        df_ship[df_ship["Passage"].isin(donut_routes)]
+        .groupby(["CRISIS_PHASE", "Passage"], as_index=False)["Number of crossings"]
+        .sum()
+    )
+    if not share_data.empty:
+        share_data["SHARE"] = share_data.groupby("CRISIS_PHASE")[
+            "Number of crossings"
+        ].transform(lambda s: s / s.sum() * 100)
+        phase_order = ["Pre-Crisis", "Post-Crisis"]
+        fig_share = px.bar(
+            share_data,
+            x="CRISIS_PHASE",
+            y="SHARE",
+            color="Passage",
+            category_orders={"CRISIS_PHASE": phase_order},
+            title="Route Share Shift",
+            text=share_data["SHARE"].map(lambda v: f"{v:.0f}%"),
+            color_discrete_map={
+                "Suez": "#ff5e5e",
+                "Bab-Al Mandab Strait": "#ffa640",
+                "Cape of Good Hope": "#3ecf6e",
+            },
         )
-
-        if not donut_data.empty:
-            fig_donut = px.pie(
-                donut_data,
-                names="Passage",
-                values="Number of crossings",
-                title=f"Traffic Share — {phase}",
-                hole=0.52,
-                color_discrete_map={
-                    "Suez": "#ff5e5e",
-                    "Bab-Al Mandab Strait": "#ffa640",
-                    "Cape of Good Hope": "#3ecf6e",
-                },
-            )
-            fig_donut.update_traces(
-                textinfo="percent+label",
-                textfont_size=10,
-                hovertemplate="<b>%{label}</b><br>Total: %{value:,}<br>%{percent}<extra></extra>",
-            )
-            fig_donut.update_layout(
-                **{**PLOTLY_LAYOUT, "margin": dict(l=5, r=5, t=44, b=5)},
-                height=300,
-                showlegend=False,
-            )
-            st.plotly_chart(fig_donut, use_container_width=True)
-        else:
-            st.info(f"No data for {phase}.")
+        fig_share.update_traces(
+            hovertemplate="<b>%{fullData.name}</b><br>Share: %{y:.1f}%<extra></extra>",
+            textposition="inside",
+        )
+        fig_share.update_layout(
+            **{
+                **PLOTLY_LAYOUT,
+                "margin": dict(l=5, r=5, t=44, b=58),
+                "legend": dict(
+                    orientation="h",
+                    yanchor="top",
+                    y=-0.18,
+                    xanchor="center",
+                    x=0.5,
+                    bgcolor="#080e1a",
+                    bordercolor="#152035",
+                    borderwidth=1,
+                    font=dict(size=11),
+                ),
+            },
+            height=320,
+            barmode="stack",
+            xaxis=dict(title=""),
+            yaxis=dict(title="Share of Crossings", ticksuffix="%", range=[0, 100]),
+        )
+        st.plotly_chart(fig_share, width="stretch", config=PLOTLY_CONFIG)
+    else:
+        st.info("No route-share data for the active passages.")
 
 with col_qbar:
     qbar_data = (
@@ -269,7 +310,7 @@ with col_qbar:
         xaxis=dict(gridcolor="#152035", title="Quarter", tickangle=-45),
         yaxis=dict(gridcolor="#152035", title="Crossings"),
     )
-    st.plotly_chart(fig_qbar, use_container_width=True)
+    st.plotly_chart(fig_qbar, width="stretch", config=PLOTLY_CONFIG)
 
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 3 — Conflict–Trade Correlation
@@ -277,6 +318,9 @@ with col_qbar:
 section_header(
     "Conflict–Trade Correlation",
     "Direct comparison of Yemen conflict intensity vs Suez Canal traffic disruption over time",
+)
+chart_note(
+    "Both series are indexed to the first overlapping month, avoiding the visual distortion that can happen with dual-axis charts."
 )
 
 yemen_monthly2 = df_conf[df_conf["COUNTRY"] == "Yemen"].copy()
@@ -296,27 +340,40 @@ if not suez_monthly_df.empty:
     sm.columns = ["month", "suez_crossings"]
     merged = pd.merge(ym2, sm, on="month", how="inner").sort_values("month")
 
-    fig_corr = make_subplots(specs=[[{"secondary_y": True}]])
-    fig_corr.add_trace(
-        go.Bar(
-            x=merged["month"],
-            y=merged["yemen_events"],
-            name="Yemen Events",
-            marker_color="#ff5e5e",
-            opacity=0.55,
-            hovertemplate="<b>%{x|%b %Y}</b><br>Yemen Events: %{y:,}<extra></extra>",
-        ),
-        secondary_y=False,
+    def to_index(series):
+        baseline = series[series > 0].iloc[0] if (series > 0).any() else 1
+        return series / baseline * 100
+
+    merged["Yemen conflict events"] = to_index(merged["yemen_events"])
+    merged["Suez crossings"] = to_index(merged["suez_crossings"])
+    corr_value = merged["yemen_events"].corr(merged["suez_crossings"])
+    corr_label = "not enough overlap" if pd.isna(corr_value) else f"{corr_value:.2f}"
+
+    corr_long = merged.melt(
+        id_vars=["month", "yemen_events", "suez_crossings"],
+        value_vars=["Yemen conflict events", "Suez crossings"],
+        var_name="Metric",
+        value_name="Index",
     )
-    fig_corr.add_trace(
-        go.Scatter(
-            x=merged["month"],
-            y=merged["suez_crossings"],
-            name="Suez Crossings",
-            line=dict(color="#3a9eff", width=2.5),
-            hovertemplate="<b>%{x|%b %Y}</b><br>Suez Avg Crossings: %{y:.0f}<extra></extra>",
+    fig_corr = px.line(
+        corr_long,
+        x="month",
+        y="Index",
+        color="Metric",
+        title="Yemen Conflict Events vs Suez Crossings (Indexed)",
+        color_discrete_map={
+            "Yemen conflict events": "#ff5e5e",
+            "Suez crossings": "#3a9eff",
+        },
+        custom_data=["yemen_events", "suez_crossings"],
+    )
+    fig_corr.update_traces(
+        line=dict(width=2.5),
+        hovertemplate=(
+            "<b>%{x|%b %Y}</b><br>%{fullData.name}: %{y:.1f}"
+            "<br>Yemen Events: %{customdata[0]:,}"
+            "<br>Suez Avg Crossings: %{customdata[1]:.0f}<extra></extra>"
         ),
-        secondary_y=True,
     )
     if not merged.empty:
         fig_corr.add_shape(
@@ -339,15 +396,37 @@ if not suez_monthly_df.empty:
         xanchor="left",
     )
     fig_corr.update_layout(
-        **PLOTLY_LAYOUT,
-        title="Yemen Conflict Events vs Suez Canal Weekly Crossings",
+        **{
+            **PLOTLY_LAYOUT,
+            "legend": dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1,
+                bgcolor="#080e1a",
+                bordercolor="#152035",
+                borderwidth=1,
+                font=dict(size=11),
+            ),
+        },
         height=400,
-        xaxis=dict(gridcolor="#152035"),
-        yaxis=dict(gridcolor="#152035", title="Yemen Events"),
-        yaxis2=dict(title="Suez Avg Crossings/Week", gridcolor="rgba(0,0,0,0)"),
+        xaxis=dict(gridcolor="#152035", title="Month"),
+        yaxis=dict(gridcolor="#152035", title="Index (first overlapping month = 100)"),
         hovermode="x unified",
     )
-    st.plotly_chart(fig_corr, use_container_width=True)
+    st.plotly_chart(fig_corr, width="stretch", config=PLOTLY_CONFIG)
+    st.markdown(
+        f"""
+        <div class='insight-box'>
+        📉 <strong>Correlation guide:</strong> The raw monthly correlation between Yemen events
+        and Suez crossings is <strong style='color:#ffffff;'>{corr_label}</strong>. Treat this
+        as directional context, not proof of causality, because routing decisions are also shaped
+        by insurance, carrier policy, and global demand.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 else:
     st.info("Data Suez tidak tersedia untuk chart korelasi.")
 

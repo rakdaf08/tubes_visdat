@@ -26,7 +26,19 @@ PLOTLY_LAYOUT = dict(
     ),
     margin=dict(l=10, r=10, t=44, b=10),
     colorway=["#3a9eff", "#ff5e5e", "#3ecf6e", "#ffa640", "#c063e8", "#5ccfff"],
+    hoverlabel=dict(
+        bgcolor="#08101f",
+        bordercolor="#1e3a5a",
+        font=dict(family="Plus Jakarta Sans", size=12, color="#d8e8ff"),
+    ),
 )
+
+PLOTLY_CONFIG = {
+    "displayModeBar": True,
+    "displaylogo": False,
+    "responsive": True,
+    "modeBarButtonsToRemove": ["lasso2d", "select2d"],
+}
 
 CRISIS_LINE = dict(
     type="line",
@@ -64,13 +76,16 @@ _CUSTOM_CSS = """
         color: #6a8aa8;
         font-size: 12px;
     }
+    [data-testid="stSidebarNav"] {
+        display: none;
+    }
 
     /* KPI Cards */
     .kpi-card {
         background: linear-gradient(145deg, #0b1628 0%, #0d1e38 100%);
         border: 1px solid #162840;
         border-top: 2px solid #1e4a8a;
-        border-radius: 16px;
+        border-radius: 10px;
         padding: 24px 28px;
         text-align: center;
         position: relative;
@@ -88,7 +103,7 @@ _CUSTOM_CSS = """
         font-weight: 700;
         letter-spacing: 1.5px;
         text-transform: uppercase;
-        color: #4a7aaa;
+        color: #70a6d8;
         margin-bottom: 8px;
     }
     .kpi-value {
@@ -113,7 +128,7 @@ _CUSTOM_CSS = """
         background: linear-gradient(90deg, rgba(13,26,50,0.9), transparent);
         border-left: 3px solid #3a7eff;
         padding: 16px 24px;
-        border-radius: 0 12px 12px 0;
+        border-radius: 0 8px 8px 0;
         margin: 32px 0 20px 0;
     }
     .section-header h2 {
@@ -127,7 +142,7 @@ _CUSTOM_CSS = """
     .section-header p {
         margin: 4px 0 0 0;
         font-size: 11px;
-        color: #3a6080;
+        color: #7aa6c8;
     }
 
     /* Deep-dive divider */
@@ -194,10 +209,10 @@ _CUSTOM_CSS = """
         background: #0b1628;
         border: 1px solid #152840;
         border-left: 3px solid #3a9eff;
-        border-radius: 12px;
+        border-radius: 8px;
         padding: 20px 24px;
         font-size: 12px;
-        color: #6a9ac8;
+        color: #9cc4e8;
         line-height: 1.6;
         margin-top: 8px;
     }
@@ -206,7 +221,7 @@ _CUSTOM_CSS = """
     .filter-bar {
         background: #080e1a;
         border: 1px solid #152035;
-        border-radius: 12px;
+        border-radius: 8px;
         padding: 24px 28px 16px 28px;
         margin-bottom: 24px;
     }
@@ -219,14 +234,87 @@ _CUSTOM_CSS = """
         color: #3a7eff;
         margin-bottom: 10px;
     }
+    .filter-summary {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 10px 0 2px 0;
+    }
+    .filter-pill {
+        background: #0b1628;
+        border: 1px solid #1a3658;
+        border-radius: 999px;
+        color: #9cc4e8;
+        display: inline-flex;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1;
+        padding: 8px 10px;
+        white-space: nowrap;
+    }
+    .chart-helper {
+        color: #7aa6c8;
+        font-size: 11px;
+        line-height: 1.55;
+        margin: -6px 0 12px 0;
+    }
+    .stButton > button,
+    [data-testid="stPageLink"] a {
+        background: #0b1628 !important;
+        border: 1px solid #1a3658 !important;
+        border-radius: 8px !important;
+        color: #d0e6ff !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        min-height: 40px;
+    }
+    .stButton > button:hover,
+    [data-testid="stPageLink"] a:hover {
+        border-color: #3a9eff !important;
+        color: #ffffff !important;
+    }
+    .sidebar-nav-link {
+        align-items: center;
+        background: #0b1628;
+        border: 1px solid #1a3658;
+        border-radius: 8px;
+        color: #d0e6ff !important;
+        display: flex;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        min-height: 40px;
+        padding: 0 12px;
+        text-decoration: none !important;
+    }
+    .sidebar-nav-link:hover {
+        border-color: #3a9eff;
+        color: #ffffff !important;
+    }
     /* Plotly charts rounded corners */
     [data-testid="stPlotlyChart"] {
-        border-radius: 12px !important;
+        border-radius: 8px !important;
         overflow: hidden !important;
         border: 1px solid #152840 !important;
     }
     [data-testid="stPlotlyChart"] iframe {
-        border-radius: 12px !important;
+        border-radius: 8px !important;
+    }
+    @media (max-width: 900px) {
+        .kpi-card {
+            padding: 18px 16px;
+        }
+        .kpi-value {
+            font-size: 22px;
+        }
+        .section-header {
+            padding: 14px 16px;
+        }
+        .filter-bar {
+            padding: 18px 16px 12px 16px;
+        }
     }
 
 
@@ -319,6 +407,19 @@ def section_header(title: str, subtitle: str = "", variant: str = "default") -> 
         """,
         unsafe_allow_html=True,
     )
+
+
+def filter_summary(items: list[tuple[str, str]]) -> None:
+    """Render compact chips that explain the currently active filters."""
+    chips = "".join(
+        f"<span class='filter-pill'>{label}: {value}</span>" for label, value in items
+    )
+    st.markdown(f"<div class='filter-summary'>{chips}</div>", unsafe_allow_html=True)
+
+
+def chart_note(text: str) -> None:
+    """Render a small chart-reading note below a section title."""
+    st.markdown(f"<div class='chart-helper'>{text}</div>", unsafe_allow_html=True)
 
 
 def page_footer() -> None:

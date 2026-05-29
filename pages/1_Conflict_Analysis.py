@@ -39,7 +39,10 @@ from utils.ui import (
     section_header,
     page_footer,
     PLOTLY_LAYOUT,
+    PLOTLY_CONFIG,
     CRISIS_LINE,
+    filter_summary,
+    chart_note,
 )
 from utils.data_loader import load_data
 
@@ -51,11 +54,28 @@ df_conf, df_ship, geojson = load_data()
 
 COUNTRIES = sorted(df_conf["COUNTRY"].unique().tolist())
 EVENT_TYPES = sorted(df_conf["EVENT_TYPE"].unique().tolist())
+YEAR_MIN = int(df_conf["YEAR"].min())
+YEAR_MAX = int(df_conf["YEAR"].max())
+DEFAULT_YEAR_RANGE = (max(2020, YEAR_MIN), YEAR_MAX)
+DEFAULT_COUNTRIES = [
+    c for c in ["Yemen", "Israel", "Palestine", "Lebanon"] if c in COUNTRIES
+]
+if not DEFAULT_COUNTRIES:
+    DEFAULT_COUNTRIES = COUNTRIES[:4]
+
+
+def reset_conflict_filters():
+    st.session_state.conflict_year_range = DEFAULT_YEAR_RANGE
+    st.session_state.conflict_countries = DEFAULT_COUNTRIES
+    st.session_state.conflict_events = EVENT_TYPES
 
 # ── Sidebar — brand + footer ──────────────
-# with st.sidebar:
-#     sidebar_brand()
-#     sidebar_footer()
+with st.sidebar:
+    sidebar_brand()
+    st.page_link("main.py", label="Overview", icon="🌊")
+    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis", icon="🌍")
+    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact", icon="🚢")
+    sidebar_footer()
 
 # ── Page header ───────────────────────────────────────────────────────────
 st.markdown(
@@ -78,21 +98,22 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ── Page-local filter bar (ıncludes year range + country + event type) ──────
-st.markdown("<div class='filter-bar'>", unsafe_allow_html=True)
-st.markdown(
-    "<div class='filter-bar-label'>🌍 Page Filters — Conflict Analysis</div>",
-    unsafe_allow_html=True,
-)
+# ── Page-local filters (includes year range + country + event type) ──────
+filter_title, filter_reset = st.columns([4, 1])
+with filter_title:
+    st.markdown(
+        "<div class='filter-bar-label'>🌍 Page Filters — Conflict Analysis</div>",
+        unsafe_allow_html=True,
+    )
+with filter_reset:
+    st.button("Reset Filters", on_click=reset_conflict_filters, key="reset_conflict")
 
 # Year range — full width
-year_min = int(df_conf["YEAR"].min())
-year_max = int(df_conf["YEAR"].max())
 year_range = st.slider(
     "Year Range",
-    min_value=year_min,
-    max_value=year_max,
-    value=(2020, year_max),
+    min_value=YEAR_MIN,
+    max_value=YEAR_MAX,
+    value=DEFAULT_YEAR_RANGE,
     step=1,
     key="conflict_year_range",
 )
@@ -101,13 +122,10 @@ year_range = st.slider(
 fc1, fc2 = st.columns(2)
 
 with fc1:
-    default_countries = [
-        c for c in ["Yemen", "Israel", "Palestine", "Lebanon"] if c in COUNTRIES
-    ]
     selected_countries = st.multiselect(
         "Countries",
         options=COUNTRIES,
-        default=default_countries if default_countries else COUNTRIES[:4],
+        default=DEFAULT_COUNTRIES,
         key="conflict_countries",
     )
 
@@ -119,7 +137,13 @@ with fc2:
         key="conflict_events",
     )
 
-st.markdown("</div>", unsafe_allow_html=True)
+filter_summary(
+    [
+        ("Years", f"{year_range[0]} - {year_range[1]}"),
+        ("Countries", f"{len(selected_countries) or len(COUNTRIES)} selected"),
+        ("Event types", f"{len(selected_events) or len(EVENT_TYPES)} selected"),
+    ]
+)
 
 # ── Apply filters ─────────────────────────────────────────────────────────
 active_countries = selected_countries if selected_countries else COUNTRIES
@@ -132,12 +156,19 @@ conf_filtered = df_conf[
     & (df_conf["EVENT_TYPE"].isin(active_events))
 ]
 
+if conf_filtered.empty:
+    st.warning("No conflict records match the active filters. Try widening the year, country, or event-type selection.")
+    st.stop()
+
 # ══════════════════════════════════════════════════════════════════════════
 # MACRO VIEW — Regional Conflict Landscape
 # ══════════════════════════════════════════════════════════════════════════
 section_header(
     "Regional Conflict Landscape",
     "Middle East conflict intensity across countries — Yemen as epicentre of the Red Sea Crisis",
+)
+chart_note(
+    "Use the map for spatial context, then read the bar chart for exact country ranking. Bubble size shows event volume; color intensity shows fatalities."
 )
 
 col_map, col_bar = st.columns([3, 2])
@@ -207,7 +238,7 @@ with col_map:
                 bordercolor="#152035",
             ),
         )
-        st.plotly_chart(fig_map, use_container_width=True)
+        st.plotly_chart(fig_map, width="stretch", config=PLOTLY_CONFIG)
         st.markdown(
             "<p class='caption-text'>Blue lines = major shipping lanes · "
             "Bubble size = events · Color = fatalities</p>",
@@ -246,40 +277,55 @@ with col_bar:
         yaxis=dict(gridcolor="rgba(0,0,0,0)"),
         showlegend=False,
     )
-    st.plotly_chart(fig_bar, use_container_width=True)
+    st.plotly_chart(fig_bar, width="stretch", config=PLOTLY_CONFIG)
 
 # ── Conflict Composition ──────────────────────────────────────────────────
 section_header(
     "Conflict Composition",
     "Distribution of conflict types across the filtered selection",
 )
+chart_note(
+    "Bars are used here instead of a pie chart so users can compare event categories precisely, especially when values are close."
+)
 
-col_pie, col_line = st.columns([1, 2])
+col_type, col_line = st.columns([1, 2])
 
-with col_pie:
-    pie_data = conf_filtered.groupby("EVENT_TYPE")["EVENTS"].sum().reset_index()
-    fig_pie = px.pie(
-        pie_data,
-        names="EVENT_TYPE",
-        values="EVENTS",
+with col_type:
+    type_data = (
+        conf_filtered.groupby("EVENT_TYPE", as_index=False)["EVENTS"]
+        .sum()
+        .sort_values("EVENTS", ascending=True)
+    )
+    fig_type = go.Figure(
+        go.Bar(
+            y=type_data["EVENT_TYPE"],
+            x=type_data["EVENTS"],
+            orientation="h",
+            marker=dict(
+                color=type_data["EVENTS"],
+                colorscale=[[0, "#10213a"], [0.55, "#1f6fb8"], [1, "#3a9eff"]],
+                line=dict(color="#0b1628", width=0.5),
+            ),
+            text=type_data["EVENTS"],
+            texttemplate="%{text:,}",
+            textposition="outside",
+            cliponaxis=False,
+            hovertemplate="<b>%{y}</b><br>Events: %{x:,}<extra></extra>",
+        )
+    )
+    fig_type.update_layout(
+        **{**PLOTLY_LAYOUT, "margin": dict(l=10, r=72, t=44, b=10)},
         title="Events by Type",
-        hole=0.48,
-        color_discrete_sequence=[
-            "#3a9eff",
-            "#ff5e5e",
-            "#3ecf6e",
-            "#ffa640",
-            "#c063e8",
-            "#5ccfff",
-        ],
+        height=360,
+        xaxis=dict(
+            gridcolor="#152035",
+            title="Events",
+            range=[0, max(type_data["EVENTS"]) * 1.18],
+        ),
+        yaxis=dict(gridcolor="rgba(0,0,0,0)", title=""),
+        showlegend=False,
     )
-    fig_pie.update_traces(
-        textinfo="percent+label",
-        textfont_size=10,
-        hovertemplate="<b>%{label}</b><br>Events: %{value:,}<br>Share: %{percent}<extra></extra>",
-    )
-    fig_pie.update_layout(**PLOTLY_LAYOUT, height=360, showlegend=False)
-    st.plotly_chart(fig_pie, use_container_width=True)
+    st.plotly_chart(fig_type, width="stretch", config=PLOTLY_CONFIG)
 
 with col_line:
     trend_data = conf_filtered.copy()
@@ -317,7 +363,7 @@ with col_line:
         xaxis=dict(gridcolor="#152035"),
         yaxis=dict(gridcolor="#152035"),
     )
-    st.plotly_chart(fig_trend, use_container_width=True)
+    st.plotly_chart(fig_trend, width="stretch", config=PLOTLY_CONFIG)
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -329,6 +375,9 @@ section_header(
     "🎯 Zooming In: Yemen & Houthi Deep-Dive",
     "Granular analysis of conflict sub-types — drone strikes, missile attacks, armed clashes",
     variant="deep-dive",
+)
+chart_note(
+    "This section intentionally stays focused on Yemen and only follows the selected year range, so the deep-dive remains comparable across filter changes."
 )
 
 # Yemen-specific slice (uses year range only, not country/event filters,
@@ -354,31 +403,55 @@ else:
     col_a, col_b = st.columns(2)
 
     with col_a:
-        fig_sub = px.pie(
-            sub_data,
-            names="SUB_EVENT_TYPE",
-            values="EVENTS",
-            title="Yemen: Attack Types Distribution (Top 10)",
-            hole=0.42,
-            color_discrete_sequence=[
-                "#ff5e5e",
-                "#ff8c42",
-                "#ffc844",
-                "#ffee70",
-                "#3ecf6e",
-                "#3a9eff",
-                "#5ccfff",
-                "#c063e8",
-                "#ff7eb6",
-                "#a8daff",
-            ],
+        pareto_data = sub_data.copy()
+        pareto_data["SHARE"] = pareto_data["EVENTS"] / pareto_data["EVENTS"].sum() * 100
+        pareto_data["CUM_SHARE"] = pareto_data["SHARE"].cumsum()
+        fig_sub = make_subplots(specs=[[{"secondary_y": True}]])
+        fig_sub.add_trace(
+            go.Bar(
+                x=pareto_data["SUB_EVENT_TYPE"],
+                y=pareto_data["EVENTS"],
+                name="Events",
+                marker_color="#ff5e5e",
+                opacity=0.72,
+                hovertemplate="<b>%{x}</b><br>Events: %{y:,}<extra></extra>",
+            ),
+            secondary_y=False,
         )
-        fig_sub.update_traces(
-            textinfo="percent",
-            hovertemplate="<b>%{label}</b><br>Events: %{value:,}<br>%{percent}<extra></extra>",
+        fig_sub.add_trace(
+            go.Scatter(
+                x=pareto_data["SUB_EVENT_TYPE"],
+                y=pareto_data["CUM_SHARE"],
+                name="Cumulative share",
+                mode="lines+markers",
+                line=dict(color="#3ecf6e", width=2),
+                marker=dict(size=6),
+                hovertemplate="<b>%{x}</b><br>Cumulative share: %{y:.1f}%<extra></extra>",
+            ),
+            secondary_y=True,
         )
-        fig_sub.update_layout(**PLOTLY_LAYOUT, height=400)
-        st.plotly_chart(fig_sub, use_container_width=True)
+        fig_sub.update_layout(
+            **{
+                **PLOTLY_LAYOUT,
+                "legend": dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1,
+                    bgcolor="#080e1a",
+                    bordercolor="#152035",
+                    borderwidth=1,
+                    font=dict(size=11),
+                ),
+            },
+            title="Yemen: Top Attack Types and Cumulative Share",
+            height=400,
+            xaxis=dict(gridcolor="#152035", tickangle=-35, title=""),
+            yaxis=dict(gridcolor="#152035", title="Events"),
+            yaxis2=dict(title="Cumulative Share", range=[0, 105], ticksuffix="%"),
+        )
+        st.plotly_chart(fig_sub, width="stretch", config=PLOTLY_CONFIG)
 
     with col_b:
         sub_bar = sub_data.sort_values("EVENTS", ascending=True)
@@ -403,12 +476,15 @@ else:
             yaxis=dict(gridcolor="rgba(0,0,0,0)"),
             showlegend=False,
         )
-        st.plotly_chart(fig_sub_bar, use_container_width=True)
+        st.plotly_chart(fig_sub_bar, width="stretch", config=PLOTLY_CONFIG)
 
     # ── Timeline ──────────────────────────────────────────────────────────
     section_header(
         "Conflict Timeline",
         "Monthly events and fatalities in Yemen — before and after the Red Sea Crisis onset",
+    )
+    chart_note(
+        "The shaded region marks the post-crisis period. Hover along the timeline to compare events and fatalities for the same month."
     )
 
     yemen_monthly = yemen_filtered.copy()
@@ -481,12 +557,15 @@ else:
         yaxis2=dict(title="Fatalities", gridcolor="rgba(0,0,0,0)"),
         hovermode="x unified",
     )
-    st.plotly_chart(fig_timeline, use_container_width=True)
+    st.plotly_chart(fig_timeline, width="stretch", config=PLOTLY_CONFIG)
 
     # ── Word Cloud ────────────────────────────────────────────────────────
     section_header(
         "Attack Type Word Cloud",
         "Visual frequency map of conflict sub-event types and disorder categories in Yemen",
+    )
+    chart_note(
+        "Use the word cloud as a quick texture view, then rely on the ranked list for exact top attack types."
     )
 
     col_wc, col_wc_info = st.columns([3, 1])
@@ -522,7 +601,7 @@ else:
             ax_wc.axis("off")
             fig_wc.patch.set_facecolor("#0b1628")
             plt.tight_layout(pad=0)
-            st.pyplot(fig_wc, use_container_width=True)
+            st.pyplot(fig_wc, width="stretch")
         else:
             st.info("No sub-event data available for the word cloud.")
 

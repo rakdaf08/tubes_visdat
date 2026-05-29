@@ -51,7 +51,7 @@ def load_data():
     if df_conf is None:
         st.error(
             "❌ File konflik tidak ditemukan. Pastikan salah satu dari file berikut "
-            "ada di folder yang sama dengan app.py atau di folder `data/` / `sources/`:\n"
+            "ada di folder yang sama dengan main.py atau di folder `data/` / `sources/`:\n"
             "- `Middle-east-conflict-data.xlsx`\n- `conflict_data.xlsx`"
         )
         st.stop()
@@ -84,7 +84,7 @@ def load_data():
     if df_ship is None:
         st.error(
             "❌ File ship crossings tidak ditemukan. Pastikan salah satu dari file berikut "
-            "ada di folder yang sama dengan app.py atau di folder `data/` / `sources/`:\n"
+            "ada di folder yang sama dengan main.py atau di folder `data/` / `sources/`:\n"
             "- `upload-weeklyshipcrossingsforsixmaritimepassagesofinterest.csv`\n"
             "- `ship_crossings.csv`"
         )

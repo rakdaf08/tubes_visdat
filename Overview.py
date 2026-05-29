@@ -1,5 +1,5 @@
 """
-app.py — Entry Point: Dashboard Overview & High-Level KPIs
+Overview page — Dashboard Overview & High-Level KPIs
 ─────────────────────────────────────────────────────────
 Red Sea Crisis: Houthi Conflict & Maritime Trade Impact
 """
@@ -22,6 +22,7 @@ from utils.ui import (
     kpi,
     page_footer,
     section_header,
+    filter_summary,
 )
 from utils.data_loader import load_data, passage_mean
 
@@ -32,11 +33,18 @@ init_ui()
 df_conf, df_ship, geojson = load_data()
 
 CRISIS_DATE = pd.Timestamp("2023-11-01")
+conf_min = df_conf["WEEK"].min().strftime("%b %Y")
+conf_max = df_conf["WEEK"].max().strftime("%b %Y")
+ship_min = df_ship["date"].min().strftime("%b %Y")
+ship_max = df_ship["date"].max().strftime("%b %Y")
 
 # ── Sidebar — brand + footer ────
-# with st.sidebar:
-#     sidebar_brand()
-#     sidebar_footer()
+with st.sidebar:
+    sidebar_brand()
+    st.page_link("main.py", label="Overview", icon="🌊")
+    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis", icon="🌍")
+    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact", icon="🚢")
+    sidebar_footer()
 
 # ── Hero header ───────────────────────────────────────────────────────────
 st.markdown(
@@ -58,6 +66,13 @@ st.markdown(
     </div>
     """,
     unsafe_allow_html=True,
+)
+filter_summary(
+    [
+        ("Conflict data", f"{conf_min} - {conf_max}"),
+        ("Ship data", f"{ship_min} - {ship_max}"),
+        ("Crisis marker", "Nov 2023"),
+    ]
 )
 
 # ── KPI computations (all-time, no year filter on overview) ───────────────
@@ -149,6 +164,11 @@ with nav1:
         """,
         unsafe_allow_html=True,
     )
+    st.page_link(
+        "pages/1_Conflict_Analysis.py",
+        label="Open Conflict Analysis",
+        icon="🌍",
+    )
 
 with nav2:
     st.markdown(
@@ -165,6 +185,11 @@ with nav2:
         </div>
         """,
         unsafe_allow_html=True,
+    )
+    st.page_link(
+        "pages/2_Maritime_Impact.py",
+        label="Open Maritime Impact",
+        icon="🚢",
     )
 
 # ── Footer ────────────────────────────────────────────────────────────────
