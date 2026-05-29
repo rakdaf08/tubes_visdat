@@ -4,9 +4,9 @@ Dashboard Analitis Interaktif yang dibangun menggunakan **Streamlit** untuk memv
 
 ---
 
-## 📌 Identifikasi & Deskripsi Aplikasi (`app.py`)
+## 📌 Identifikasi & Deskripsi Aplikasi (`main.py`)
 
-Aplikasi utama berada pada berkas [app.py](file:///C:/Users/rakad/OneDrive/Dokumen/ITB/Spesialisasi/Visdat/tubes_visdat/app.py). Dashboard ini memiliki beberapa fitur utama:
+Aplikasi utama dijalankan melalui berkas `main.py`. Dashboard ini memiliki beberapa fitur utama:
 1. **Regional Conflict Overview (Tab 1)**: Visualisasi persebaran dan intensitas konflik di Timur Tengah berdasarkan negara, visualisasi spasial menggunakan peta interaktif Mapbox yang di-overlay dengan rute pelayaran laut utama (*shipping lanes*), serta tren konflik bulanan.
 2. **Yemen & Houthi Deep-Dive (Tab 2)**: Analisis mendalam tipe serangan (misal: serangan drone, rudal, bentrokan bersenjata), timeline bulanan kejadian dan korban jiwa di Yaman, serta visualisasi Word Cloud dari tipe sub-kejadian (*sub-event type*).
 3. **Maritime Impact (Tab 3)**: Grafik lalu lintas mingguan kapal di berbagai selat/terusan utama, perbandingan pangsa lalu lintas sebelum dan sesudah krisis (*Pre-Crisis* vs *Post-Crisis*), serta grafik korelasi antara intensitas konflik di Yaman dengan rata-rata penyeberangan mingguan di Terusan Suez.
@@ -81,7 +81,7 @@ uv sync
 Setelah semua dependensi terinstal dan virtual environment aktif, jalankan perintah berikut dari direktori utama proyek:
 
 ```bash
-streamlit run app.py
+streamlit run main.py
 ```
 
 Setelah dijalankan, terminal akan menampilkan alamat URL lokal (biasanya `http://localhost:8501`). Buka alamat tersebut pada peramban (browser) Anda untuk melihat dashboard.
