@@ -1,6 +1,10 @@
-def main():
-    print("Hello from tubes-visdat!")
+"""Main Streamlit entry point.
+
+Run with:
+    streamlit run main.py
+"""
+
+import runpy
 
 
-if __name__ == "__main__":
-    main()
+runpy.run_path("Overview.py")
