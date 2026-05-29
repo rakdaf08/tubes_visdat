@@ -16,8 +16,8 @@ import streamlit as st
 PLOTLY_LAYOUT = dict(
     paper_bgcolor="#0b1628",
     plot_bgcolor="#0b1628",
-    font=dict(family="DM Sans", color="#b0c4de", size=12),
-    title_font=dict(family="Syne", size=14, color="#d0dced"),
+    font=dict(family="Plus Jakarta Sans", color="#b0c4de", size=12),
+    title_font=dict(family="Plus Jakarta Sans", size=14, color="#d0dced"),
     legend=dict(
         bgcolor="#080e1a",
         bordercolor="#152035",
@@ -30,8 +30,11 @@ PLOTLY_LAYOUT = dict(
 
 CRISIS_LINE = dict(
     type="line",
-    x0="2023-11-01", x1="2023-11-01",
-    y0=0, y1=1, yref="paper",
+    x0="2023-11-01",
+    x1="2023-11-01",
+    y0=0,
+    y1=1,
+    yref="paper",
     line=dict(color="#ff5e5e", width=1.5, dash="dot"),
 )
 
@@ -40,10 +43,10 @@ CRISIS_LINE = dict(
 # ─────────────────────────────────────────────
 _CUSTOM_CSS = """
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
     html, body, [class*="css"] {
-        font-family: 'DM Sans', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
     .stApp {
@@ -67,8 +70,8 @@ _CUSTOM_CSS = """
         background: linear-gradient(145deg, #0b1628 0%, #0d1e38 100%);
         border: 1px solid #162840;
         border-top: 2px solid #1e4a8a;
-        border-radius: 10px;
-        padding: 18px 20px;
+        border-radius: 16px;
+        padding: 24px 28px;
         text-align: center;
         position: relative;
         overflow: hidden;
@@ -80,7 +83,7 @@ _CUSTOM_CSS = """
         background: linear-gradient(90deg, transparent, #3a7eff55, transparent);
     }
     .kpi-label {
-        font-family: 'Syne', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 1.5px;
@@ -89,7 +92,7 @@ _CUSTOM_CSS = """
         margin-bottom: 8px;
     }
     .kpi-value {
-        font-family: 'Syne', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 28px;
         font-weight: 800;
         color: #ffffff;
@@ -109,13 +112,13 @@ _CUSTOM_CSS = """
     .section-header {
         background: linear-gradient(90deg, rgba(13,26,50,0.9), transparent);
         border-left: 3px solid #3a7eff;
-        padding: 10px 16px;
-        border-radius: 0 8px 8px 0;
-        margin: 28px 0 16px 0;
+        padding: 16px 24px;
+        border-radius: 0 12px 12px 0;
+        margin: 32px 0 20px 0;
     }
     .section-header h2 {
         margin: 0;
-        font-family: 'Syne', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 16px;
         font-weight: 700;
         color: #c0d4ee;
@@ -137,7 +140,7 @@ _CUSTOM_CSS = """
     /* Widget labels */
     .stSelectbox label, .stMultiSelect label, .stSlider label, .stRadio label {
         color: #5a8aaa !important;
-        font-family: 'Syne', sans-serif !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 11px !important;
         font-weight: 700 !important;
         letter-spacing: 0.8px !important;
@@ -153,14 +156,14 @@ _CUSTOM_CSS = """
     .stTabs [data-baseweb="tab"] {
         background-color: #080e1a;
         color: #3a6080;
-        border-radius: 6px 6px 0 0;
+        border-radius: 12px 12px 0 0;
         border: 1px solid #152035;
         border-bottom: none;
-        font-family: 'Syne', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 12px;
         font-weight: 600;
         letter-spacing: 0.3px;
-        padding: 8px 20px;
+        padding: 12px 24px;
     }
     .stTabs [aria-selected="true"] {
         background-color: #0b1628 !important;
@@ -180,7 +183,7 @@ _CUSTOM_CSS = """
 
     /* Hero title */
     .hero-subtitle {
-        font-family: 'DM Sans', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 14px;
         color: #3a6080;
         letter-spacing: 0.3px;
@@ -191,8 +194,8 @@ _CUSTOM_CSS = """
         background: #0b1628;
         border: 1px solid #152840;
         border-left: 3px solid #3a9eff;
-        border-radius: 6px;
-        padding: 12px 16px;
+        border-radius: 12px;
+        padding: 20px 24px;
         font-size: 12px;
         color: #6a9ac8;
         line-height: 1.6;
@@ -203,18 +206,27 @@ _CUSTOM_CSS = """
     .filter-bar {
         background: #080e1a;
         border: 1px solid #152035;
-        border-radius: 8px;
-        padding: 16px 20px 8px 20px;
-        margin-bottom: 20px;
+        border-radius: 12px;
+        padding: 24px 28px 16px 28px;
+        margin-bottom: 24px;
     }
     .filter-bar-label {
-        font-family: 'Syne', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 1.5px;
         text-transform: uppercase;
         color: #3a7eff;
         margin-bottom: 10px;
+    }
+    /* Plotly charts rounded corners */
+    [data-testid="stPlotlyChart"] {
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        border: 1px solid #152840 !important;
+    }
+    [data-testid="stPlotlyChart"] iframe {
+        border-radius: 12px !important;
     }
 
 
@@ -236,7 +248,7 @@ def sidebar_brand() -> None:
     st.markdown(
         """
         <div style='padding: 12px 0 8px 0;'>
-            <div style='font-family: Syne, sans-serif; font-size: 18px;
+            <div style='font-family: Plus Jakarta Sans, sans-serif; font-size: 18px;
                         font-weight: 800; color: #ffffff;'>🌊 Red Sea Crisis</div>
             <div style='font-size: 11px; color: #3a6080; margin-top: 4px;'>
                 Analytical Dashboard
@@ -263,11 +275,6 @@ def sidebar_footer() -> None:
         """,
         unsafe_allow_html=True,
     )
-
-
-
-
-
 
 
 def kpi(col, label: str, value: str, delta_text: str, delta_type: str) -> None:
@@ -321,7 +328,7 @@ def page_footer() -> None:
         """
         <div style='text-align:center; padding:20px 0; color:#1e3a5a;
                     font-size:11px; line-height:2.2;'>
-            <strong style='font-family:Syne,sans-serif; color:#3a7eff;
+            <strong style='font-family:Plus Jakarta Sans,sans-serif; color:#3a7eff;
                            font-size:13px; letter-spacing:0.5px;'>
                 Red Sea Crisis: Houthi Conflict &amp; Maritime Trade Impact
             </strong><br>

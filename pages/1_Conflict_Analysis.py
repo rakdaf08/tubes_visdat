@@ -33,9 +33,13 @@ st.set_page_config(
 )
 
 from utils.ui import (
-    init_ui, sidebar_brand, sidebar_footer,
-    section_header, page_footer,
-    PLOTLY_LAYOUT, CRISIS_LINE,
+    init_ui,
+    sidebar_brand,
+    sidebar_footer,
+    section_header,
+    page_footer,
+    PLOTLY_LAYOUT,
+    CRISIS_LINE,
 )
 from utils.data_loader import load_data
 
@@ -45,7 +49,7 @@ init_ui()
 # ── Data ──────────────────────────────────────────────────────────────────
 df_conf, df_ship, geojson = load_data()
 
-COUNTRIES   = sorted(df_conf["COUNTRY"].unique().tolist())
+COUNTRIES = sorted(df_conf["COUNTRY"].unique().tolist())
 EVENT_TYPES = sorted(df_conf["EVENT_TYPE"].unique().tolist())
 
 # ── Sidebar — brand + footer ──────────────
@@ -58,15 +62,15 @@ st.markdown(
     """
     <div style='padding: 28px 0 8px 0;'>
         <div style='font-size:10px; letter-spacing:4px; color:#3a7eff; font-weight:700;
-                    font-family: Syne, sans-serif; text-transform:uppercase; margin-bottom:10px;'>
+                    font-family: Plus Jakarta Sans, sans-serif; text-transform:uppercase; margin-bottom:10px;'>
             Deep Analysis
         </div>
-        <h1 style='font-family: Syne, sans-serif; font-size:32px; font-weight:800;
+        <h1 style='font-family: Plus Jakarta Sans, sans-serif; font-size:32px; font-weight:800;
                    color:#ffffff; margin:0; line-height:1.1; letter-spacing:-0.5px;'>
             🌍 Conflict Analysis
         </h1>
         <p style='font-size:13px; color:#3a6080; margin-top:8px;
-                  font-family: DM Sans, sans-serif;'>
+                  font-family: Plus Jakarta Sans, sans-serif;'>
             Regional conflict landscape &amp; Yemen · Houthi deep-dive
         </p>
     </div>
@@ -86,8 +90,10 @@ year_min = int(df_conf["YEAR"].min())
 year_max = int(df_conf["YEAR"].max())
 year_range = st.slider(
     "Year Range",
-    min_value=year_min, max_value=year_max,
-    value=(2020, year_max), step=1,
+    min_value=year_min,
+    max_value=year_max,
+    value=(2020, year_max),
+    step=1,
     key="conflict_year_range",
 )
 
@@ -95,7 +101,9 @@ year_range = st.slider(
 fc1, fc2 = st.columns(2)
 
 with fc1:
-    default_countries = [c for c in ["Yemen", "Israel", "Palestine", "Lebanon"] if c in COUNTRIES]
+    default_countries = [
+        c for c in ["Yemen", "Israel", "Palestine", "Lebanon"] if c in COUNTRIES
+    ]
     selected_countries = st.multiselect(
         "Countries",
         options=COUNTRIES,
@@ -115,13 +123,13 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ── Apply filters ─────────────────────────────────────────────────────────
 active_countries = selected_countries if selected_countries else COUNTRIES
-active_events    = selected_events    if selected_events    else EVENT_TYPES
+active_events = selected_events if selected_events else EVENT_TYPES
 
 conf_filtered = df_conf[
-    (df_conf["YEAR"] >= year_range[0]) &
-    (df_conf["YEAR"] <= year_range[1]) &
-    (df_conf["COUNTRY"].isin(active_countries)) &
-    (df_conf["EVENT_TYPE"].isin(active_events))
+    (df_conf["YEAR"] >= year_range[0])
+    & (df_conf["YEAR"] <= year_range[1])
+    & (df_conf["COUNTRY"].isin(active_countries))
+    & (df_conf["EVENT_TYPE"].isin(active_events))
 ]
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -137,7 +145,9 @@ col_map, col_bar = st.columns([3, 2])
 # ── Interactive scatter-map ───────────────────────────────────────────────
 with col_map:
     lat_col = next((c for c in df_conf.columns if "lat" in c.lower()), None)
-    lon_col = next((c for c in df_conf.columns if "lon" in c.lower() or "lng" in c.lower()), None)
+    lon_col = next(
+        (c for c in df_conf.columns if "lon" in c.lower() or "lng" in c.lower()), None
+    )
 
     if lat_col and lon_col:
         map_data = conf_filtered.groupby(
@@ -148,7 +158,8 @@ with col_map:
 
         fig_map = px.scatter_mapbox(
             map_data,
-            lat="LAT", lon="LON",
+            lat="LAT",
+            lon="LON",
             size="EVENTS",
             color="FATALITIES",
             hover_name="COUNTRY",
@@ -165,22 +176,24 @@ with col_map:
         if geojson:
             for feat in geojson.get("features", []):
                 try:
-                    geom       = feat["geometry"]
+                    geom = feat["geometry"]
                     coords_raw = geom["coordinates"]
-                    lane_type  = feat.get("properties", {}).get("Type", "Minor")
+                    lane_type = feat.get("properties", {}).get("Type", "Minor")
                     color = "#3a9eff" if lane_type == "Major" else "#1a4a7a"
-                    width = 2      if lane_type == "Major" else 1
+                    width = 2 if lane_type == "Major" else 1
                     lines = [coords_raw] if geom["type"] == "LineString" else coords_raw
                     for line in lines:
-                        fig_map.add_trace(go.Scattermapbox(
-                            lon=[c[0] for c in line],
-                            lat=[c[1] for c in line],
-                            mode="lines",
-                            line=dict(color=color, width=width),
-                            hoverinfo="skip",
-                            showlegend=False,
-                            opacity=0.6,
-                        ))
+                        fig_map.add_trace(
+                            go.Scattermapbox(
+                                lon=[c[0] for c in line],
+                                lat=[c[1] for c in line],
+                                mode="lines",
+                                line=dict(color=color, width=width),
+                                hoverinfo="skip",
+                                showlegend=False,
+                                opacity=0.6,
+                            )
+                        )
                 except Exception:
                     continue
 
@@ -211,18 +224,20 @@ with col_bar:
         .sort_values("EVENTS", ascending=True)
     )
 
-    fig_bar = go.Figure(go.Bar(
-        y=bar_data["COUNTRY"],
-        x=bar_data["EVENTS"],
-        orientation="h",
-        marker=dict(
-            color=bar_data["EVENTS"],
-            colorscale=[[0, "#0d2040"], [0.5, "#1a5a9e"], [1, "#3a9eff"]],
-            line=dict(color="#0b1628", width=0.5),
-        ),
-        customdata=bar_data["FATALITIES"],
-        hovertemplate="<b>%{y}</b><br>Events: %{x:,}<br>Fatalities: %{customdata:,}<extra></extra>",
-    ))
+    fig_bar = go.Figure(
+        go.Bar(
+            y=bar_data["COUNTRY"],
+            x=bar_data["EVENTS"],
+            orientation="h",
+            marker=dict(
+                color=bar_data["EVENTS"],
+                colorscale=[[0, "#0d2040"], [0.5, "#1a5a9e"], [1, "#3a9eff"]],
+                line=dict(color="#0b1628", width=0.5),
+            ),
+            customdata=bar_data["FATALITIES"],
+            hovertemplate="<b>%{y}</b><br>Events: %{x:,}<br>Fatalities: %{customdata:,}<extra></extra>",
+        )
+    )
     fig_bar.update_layout(
         **PLOTLY_LAYOUT,
         title="Total Conflict Events by Country",
@@ -249,7 +264,14 @@ with col_pie:
         values="EVENTS",
         title="Events by Type",
         hole=0.48,
-        color_discrete_sequence=["#3a9eff", "#ff5e5e", "#3ecf6e", "#ffa640", "#c063e8", "#5ccfff"],
+        color_discrete_sequence=[
+            "#3a9eff",
+            "#ff5e5e",
+            "#3ecf6e",
+            "#ffa640",
+            "#c063e8",
+            "#5ccfff",
+        ],
     )
     fig_pie.update_traces(
         textinfo="percent+label",
@@ -270,16 +292,23 @@ with col_line:
     )
 
     fig_trend = px.line(
-        monthly, x="MONTH_DT", y="EVENTS", color="COUNTRY",
+        monthly,
+        x="MONTH_DT",
+        y="EVENTS",
+        color="COUNTRY",
         title="Monthly Conflict Events by Country",
         labels={"MONTH_DT": "Month", "EVENTS": "Events"},
     )
     fig_trend.add_shape(CRISIS_LINE)
     fig_trend.add_annotation(
-        x="2023-11-01", y=1, yref="paper",
-        text="Crisis Onset", showarrow=False,
+        x="2023-11-01",
+        y=1,
+        yref="paper",
+        text="Crisis Onset",
+        showarrow=False,
         font=dict(color="#ff5e5e", size=10),
-        xanchor="left", yanchor="top",
+        xanchor="left",
+        yanchor="top",
     )
     fig_trend.update_traces(line=dict(width=1.8))
     fig_trend.update_layout(
@@ -305,9 +334,9 @@ section_header(
 # Yemen-specific slice (uses year range only, not country/event filters,
 # because this section is always about Yemen)
 yemen_filtered = df_conf[
-    (df_conf["COUNTRY"] == "Yemen") &
-    (df_conf["YEAR"] >= year_range[0]) &
-    (df_conf["YEAR"] <= year_range[1])
+    (df_conf["COUNTRY"] == "Yemen")
+    & (df_conf["YEAR"] >= year_range[0])
+    & (df_conf["YEAR"] <= year_range[1])
 ]
 
 if yemen_filtered.empty:
@@ -332,9 +361,16 @@ else:
             title="Yemen: Attack Types Distribution (Top 10)",
             hole=0.42,
             color_discrete_sequence=[
-                "#ff5e5e", "#ff8c42", "#ffc844", "#ffee70",
-                "#3ecf6e", "#3a9eff", "#5ccfff", "#c063e8",
-                "#ff7eb6", "#a8daff",
+                "#ff5e5e",
+                "#ff8c42",
+                "#ffc844",
+                "#ffee70",
+                "#3ecf6e",
+                "#3a9eff",
+                "#5ccfff",
+                "#c063e8",
+                "#ff7eb6",
+                "#a8daff",
             ],
         )
         fig_sub.update_traces(
@@ -346,17 +382,19 @@ else:
 
     with col_b:
         sub_bar = sub_data.sort_values("EVENTS", ascending=True)
-        fig_sub_bar = go.Figure(go.Bar(
-            y=sub_bar["SUB_EVENT_TYPE"],
-            x=sub_bar["EVENTS"],
-            orientation="h",
-            marker=dict(
-                color=sub_bar["EVENTS"],
-                colorscale=[[0, "#200808"], [0.5, "#8a2020"], [1, "#ff5e5e"]],
-                line=dict(color="#0b1628", width=0.5),
-            ),
-            hovertemplate="<b>%{y}</b><br>Events: %{x:,}<extra></extra>",
-        ))
+        fig_sub_bar = go.Figure(
+            go.Bar(
+                y=sub_bar["SUB_EVENT_TYPE"],
+                x=sub_bar["EVENTS"],
+                orientation="h",
+                marker=dict(
+                    color=sub_bar["EVENTS"],
+                    colorscale=[[0, "#200808"], [0.5, "#8a2020"], [1, "#ff5e5e"]],
+                    line=dict(color="#0b1628", width=0.5),
+                ),
+                hovertemplate="<b>%{y}</b><br>Events: %{x:,}<extra></extra>",
+            )
+        )
         fig_sub_bar.update_layout(
             **PLOTLY_LAYOUT,
             title="Yemen: Top 10 Attack Methods",
@@ -384,38 +422,55 @@ else:
     fig_timeline = make_subplots(specs=[[{"secondary_y": True}]])
     fig_timeline.add_trace(
         go.Bar(
-            x=ym["MONTH_DT"], y=ym["EVENTS"], name="Events",
-            marker_color="#3a9eff", opacity=0.65,
+            x=ym["MONTH_DT"],
+            y=ym["EVENTS"],
+            name="Events",
+            marker_color="#3a9eff",
+            opacity=0.65,
             hovertemplate="<b>%{x|%b %Y}</b><br>Events: %{y:,}<extra></extra>",
         ),
         secondary_y=False,
     )
     fig_timeline.add_trace(
         go.Scatter(
-            x=ym["MONTH_DT"], y=ym["FATALITIES"], name="Fatalities",
+            x=ym["MONTH_DT"],
+            y=ym["FATALITIES"],
+            name="Fatalities",
             line=dict(color="#ff5e5e", width=2.5),
             hovertemplate="<b>%{x|%b %Y}</b><br>Fatalities: %{y:,}<extra></extra>",
         ),
         secondary_y=True,
     )
     fig_timeline.add_shape(
-        type="line", x0="2023-11-01", x1="2023-11-01",
-        y0=0, y1=1, yref="paper",
+        type="line",
+        x0="2023-11-01",
+        x1="2023-11-01",
+        y0=0,
+        y1=1,
+        yref="paper",
         line=dict(color="#ff5e5e", width=1.5, dash="dot"),
     )
     if not ym.empty:
         fig_timeline.add_shape(
             type="rect",
-            x0="2023-11-01", x1=str(ym["MONTH_DT"].max()),
-            y0=0, y1=1, yref="paper",
+            x0="2023-11-01",
+            x1=str(ym["MONTH_DT"].max()),
+            y0=0,
+            y1=1,
+            yref="paper",
             fillcolor="rgba(255,94,94,0.04)",
             line=dict(color="rgba(255,94,94,0.2)", width=1),
         )
     fig_timeline.add_annotation(
-        x="2023-11-01", y=0.97, yref="paper",
-        text="  🔴 Houthi Crisis Onset", showarrow=False,
-        font=dict(color="#ff5e5e", size=11, family="Syne"),
-        xanchor="left", bgcolor="#1a0808", borderpad=4,
+        x="2023-11-01",
+        y=0.97,
+        yref="paper",
+        text="  🔴 Houthi Crisis Onset",
+        showarrow=False,
+        font=dict(color="#ff5e5e", size=11, family="Plus Jakarta Sans"),
+        xanchor="left",
+        bgcolor="#1a0808",
+        borderpad=4,
     )
     fig_timeline.update_layout(
         **PLOTLY_LAYOUT,
@@ -444,12 +499,15 @@ else:
         wc_freq3 = yemen_filtered.groupby("DISORDER_TYPE")["EVENTS"].sum().to_dict()
         wc_combined.update({k: v // 6 for k, v in wc_freq3.items()})
 
-    wc_combined = {str(k): int(v) for k, v in wc_combined.items() if k and str(k).strip()}
+    wc_combined = {
+        str(k): int(v) for k, v in wc_combined.items() if k and str(k).strip()
+    }
 
     with col_wc:
         if wc_combined:
             wc = WordCloud(
-                width=900, height=380,
+                width=900,
+                height=380,
                 background_color="#0b1628",
                 colormap="YlOrRd",
                 max_words=70,
@@ -473,7 +531,7 @@ else:
             """
             <div style='padding:14px; background:#0b1628; border:1px solid #152840;
                         border-radius:8px; margin-top:8px;'>
-            <div style='font-family:Syne,sans-serif; font-size:10px; color:#3a9eff;
+            <div style='font-family:Plus Jakarta Sans,sans-serif; font-size:10px; color:#3a9eff;
                         font-weight:700; letter-spacing:1px; text-transform:uppercase;
                         margin-bottom:12px;'>Top Attack Types</div>
             """,

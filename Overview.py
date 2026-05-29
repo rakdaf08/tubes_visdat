@@ -41,17 +41,17 @@ CRISIS_DATE = pd.Timestamp("2023-11-01")
 # ── Hero header ───────────────────────────────────────────────────────────
 st.markdown(
     """
-    <div style='text-align:center; padding: 36px 0 28px 0;'>
+    <div style='text-align:center; padding: 56px 0 48px 0;'>
         <div style='font-size:10px; letter-spacing:4px; color:#3a7eff; font-weight:700;
-                    font-family: Syne, sans-serif; text-transform:uppercase; margin-bottom:12px;'>
+                    font-family: Plus Jakarta Sans, sans-serif; text-transform:uppercase; margin-bottom:12px;'>
             Analytical Dashboard
         </div>
-        <h1 style='font-family: Syne, sans-serif; font-size:42px; font-weight:800;
+        <h1 style='font-family: Plus Jakarta Sans, sans-serif; font-size:42px; font-weight:800;
                    color:#ffffff; margin:0; line-height:1; letter-spacing:-1px;'>
             🌊 Red Sea Crisis
         </h1>
         <p style='font-size:15px; color:#3a6080; margin-top:12px; font-weight:400;
-                  font-family: DM Sans, sans-serif; max-width:580px;
+                  font-family: Plus Jakarta Sans, sans-serif; max-width:580px;
                   margin-left:auto; margin-right:auto;'>
             Houthi Conflict &amp; Its Impact on Global Maritime Trade
         </p>
@@ -137,9 +137,9 @@ nav1, nav2 = st.columns(2)
 with nav1:
     st.markdown(
         """
-        <div class='kpi-card' style='text-align:left; padding:24px 28px; min-height:160px;'>
+        <div class='kpi-card' style='text-align:left; padding:32px 36px; min-height:180px;'>
             <div style='font-size:28px; margin-bottom:10px;'>🌍</div>
-            <div style='font-family:Syne,sans-serif; font-size:15px; font-weight:700;
+            <div style='font-family:Plus Jakarta Sans,sans-serif; font-size:15px; font-weight:700;
                         color:#c0d4ee; margin-bottom:8px;'>Conflict Analysis</div>
             <div style='font-size:12px; color:#4a7aaa; line-height:1.6;'>
                 Regional conflict landscape, country-level breakdown, Yemen &amp;
@@ -153,10 +153,10 @@ with nav1:
 with nav2:
     st.markdown(
         """
-        <div class='kpi-card' style='text-align:left; padding:24px 28px; min-height:160px;
+        <div class='kpi-card' style='text-align:left; padding:32px 36px; min-height:180px;
                                       border-top-color:#3ecf6e;'>
             <div style='font-size:28px; margin-bottom:10px;'>🚢</div>
-            <div style='font-family:Syne,sans-serif; font-size:15px; font-weight:700;
+            <div style='font-family:Plus Jakarta Sans,sans-serif; font-size:15px; font-weight:700;
                         color:#c0d4ee; margin-bottom:8px;'>Maritime Impact</div>
             <div style='font-size:12px; color:#4a7aaa; line-height:1.6;'>
                 Weekly ship crossings, passage traffic shares (pre vs post-crisis),
