@@ -144,9 +144,9 @@ col_map, col_bar = st.columns([3, 2])
 
 # ── Interactive scatter-map ───────────────────────────────────────────────
 with col_map:
-    lat_col = next((c for c in df_conf.columns if "lat" in c.lower()), None)
+    lat_col = next((c for c in df_conf.columns if "latitude" in c.lower()), None)
     lon_col = next(
-        (c for c in df_conf.columns if "lon" in c.lower() or "lng" in c.lower()), None
+        (c for c in df_conf.columns if "longitude" in c.lower()), None
     )
 
     if lat_col and lon_col:
