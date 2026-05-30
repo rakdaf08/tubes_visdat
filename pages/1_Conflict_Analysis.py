@@ -43,6 +43,7 @@ from utils.ui import (
     CRISIS_LINE,
     filter_summary,
     chart_note,
+    chart_title,
 )
 from utils.data_loader import load_data
 
@@ -81,7 +82,7 @@ with st.sidebar:
 # ── Page header ───────────────────────────────────────────────────────────
 st.markdown(
     """
-    <div style='padding: 28px 0 8px 0;'>
+    <div>
         <h1 style='font-family: Plus Jakarta Sans, sans-serif; font-size:32px; font-weight:800;
                    color:#ffffff; margin:0; line-height:1.1; letter-spacing:-0.5px;'>
             🌍 Conflict Analysis
@@ -96,7 +97,7 @@ st.markdown(
 )
 
 
-tab_general, tab_yemen = st.tabs(["🌍 General Analysis", "🎯 Yemen & Houthi Deep-Dive"])
+tab_general, tab_yemen = st.tabs(["General Analysis", "Yemen & Houthi Deep-Dive"])
 
 with tab_general:
     # ══════════════════════════════════════════════════════════════════════════
@@ -227,6 +228,7 @@ with tab_general:
 
             fig_map.update_layout(
                 **PLOTLY_LAYOUT,
+                title=chart_title("Conflict Intensity by Country"),
                 height=450,
                 coloraxis_colorbar=dict(
                     title=dict(text="Fatalities", font=dict(color="#6a9ac8")),
@@ -269,7 +271,7 @@ with tab_general:
         )
         fig_bar.update_layout(
             **PLOTLY_LAYOUT,
-            title="Total Conflict Events by Country",
+            title=chart_title("Total Conflict Events by Country"),
             height=450,
             xaxis=dict(gridcolor="#152035", title="Events"),
             yaxis=dict(gridcolor="rgba(0,0,0,0)"),
@@ -313,7 +315,7 @@ with tab_general:
         )
         fig_type.update_layout(
             **{**PLOTLY_LAYOUT, "margin": dict(l=10, r=72, t=44, b=10)},
-            title="Events by Type",
+            title=chart_title("Events by Type"),
             height=360,
             xaxis=dict(
                 gridcolor="#152035",
@@ -357,6 +359,7 @@ with tab_general:
         fig_trend.update_traces(line=dict(width=1.8))
         fig_trend.update_layout(
             **PLOTLY_LAYOUT,
+            title=chart_title("Monthly Conflict Events by Country"),
             height=360,
             xaxis=dict(gridcolor="#152035"),
             yaxis=dict(gridcolor="#152035"),
@@ -446,7 +449,7 @@ with tab_yemen:
                         font=dict(size=11),
                     ),
                 },
-                title="Yemen: Top Attack Types and Cumulative Share",
+                title=chart_title("Yemen: Top Attack Types and Cumulative Share"),
                 height=400,
                 xaxis=dict(gridcolor="#152035", tickangle=-35, title=""),
                 yaxis=dict(gridcolor="#152035", title="Events"),
@@ -471,7 +474,7 @@ with tab_yemen:
             )
             fig_sub_bar.update_layout(
                 **PLOTLY_LAYOUT,
-                title="Yemen: Top 10 Attack Methods",
+                title=chart_title("Yemen: Top 10 Attack Methods"),
                 height=400,
                 xaxis=dict(gridcolor="#152035", title="Total Events"),
                 yaxis=dict(gridcolor="rgba(0,0,0,0)"),
@@ -553,7 +556,7 @@ with tab_yemen:
         )
         fig_timeline.update_layout(
             **PLOTLY_LAYOUT,
-            title="Yemen Monthly Conflict Events & Fatalities",
+            title=chart_title("Yemen Monthly Conflict Events & Fatalities"),
             height=380,
             xaxis=dict(gridcolor="#152035"),
             yaxis=dict(gridcolor="#152035", title="Events"),

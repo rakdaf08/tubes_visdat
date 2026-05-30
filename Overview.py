@@ -67,13 +67,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-filter_summary(
-    [
-        ("Conflict data", f"{conf_min} - {conf_max}"),
-        ("Ship data", f"{ship_min} - {ship_max}"),
-        ("Crisis marker", "Nov 2023"),
-    ]
-)
 
 # ── KPI computations (all-time, no year filter on overview) ───────────────
 total_events = int(df_conf["EVENTS"].sum())

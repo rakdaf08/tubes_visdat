@@ -36,6 +36,7 @@ from utils.ui import (
     CRISIS_LINE,
     filter_summary,
     chart_note,
+    chart_title,
 )
 from utils.data_loader import load_data, passage_mean
 
@@ -59,6 +60,7 @@ if not DEFAULT_PASSAGES:
 def reset_maritime_filters():
     st.session_state.maritime_passages = DEFAULT_PASSAGES
 
+
 # ── Sidebar — brand + footer ──────────────
 with st.sidebar:
     sidebar_brand()
@@ -70,7 +72,7 @@ with st.sidebar:
 # ── Page header ───────────────────────────────────────────────────────────
 st.markdown(
     """
-    <div style='padding: 28px 0 8px 0;'>
+    <div>
         <h1 style='font-family: Plus Jakarta Sans, sans-serif; font-size:32px; font-weight:800;
                    color:#ffffff; margin:0; line-height:1.1; letter-spacing:-0.5px;'>
             🚢 Maritime Impact
@@ -120,7 +122,12 @@ with col_ms:
         key="maritime_passages",
     )
 with col_btn:
-    st.button("Reset Filters", on_click=reset_maritime_filters, key="reset_maritime", width="stretch")
+    st.button(
+        "Reset Filters",
+        on_click=reset_maritime_filters,
+        key="reset_maritime",
+        width="stretch",
+    )
 
 # ── Resolve active passages ────────────────────────────────────────────────
 active_passages = selected_passages if selected_passages else PASSAGES
@@ -170,7 +177,7 @@ fig_line.add_annotation(
 )
 fig_line.update_layout(
     **PLOTLY_LAYOUT,
-    title="Weekly Ship Crossings — All Major Passages",
+    title=chart_title("Weekly Ship Crossings — All Major Passages"),
     height=420,
     xaxis=dict(gridcolor="#152035", title="Week"),
     yaxis=dict(gridcolor="#152035", title="Number of Crossings"),
@@ -257,6 +264,7 @@ with col_share:
                     font=dict(size=11),
                 ),
             },
+            title=chart_title("Route Share Shift"),
             height=320,
             barmode="stack",
             xaxis=dict(title=""),
@@ -289,6 +297,7 @@ with col_qbar:
     )
     fig_qbar.update_layout(
         **{**PLOTLY_LAYOUT, "margin": dict(l=5, r=5, t=44, b=60)},
+        title=chart_title("Quarterly Ship Crossings by Route"),
         height=300,
         xaxis=dict(gridcolor="#152035", title="Quarter", tickangle=-45),
         yaxis=dict(gridcolor="#152035", title="Crossings"),
@@ -393,6 +402,7 @@ if not suez_monthly_df.empty:
                 font=dict(size=11),
             ),
         },
+        title=chart_title("Yemen Conflict Events vs Suez Crossings (Indexed)"),
         height=400,
         xaxis=dict(gridcolor="#152035", title="Month"),
         yaxis=dict(gridcolor="#152035", title="Index (first overlapping month = 100)"),

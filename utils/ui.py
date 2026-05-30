@@ -16,15 +16,15 @@ import streamlit as st
 PLOTLY_LAYOUT = dict(
     paper_bgcolor="#0b1628",
     plot_bgcolor="#0b1628",
-    font=dict(family="Plus Jakarta Sans", color="#b0c4de", size=12),
-    title_font=dict(family="Plus Jakarta Sans", size=14, color="#d0dced"),
+    font=dict(family="Plus Jakarta Sans", color="#b0c4de", size=13),
+    title_font=dict(family="Plus Jakarta Sans", size=15, color="#d0dced"),
     legend=dict(
         bgcolor="#080e1a",
         bordercolor="#152035",
         borderwidth=1,
         font=dict(size=11),
     ),
-    margin=dict(l=10, r=10, t=44, b=10),
+    margin=dict(l=10, r=10, t=52, b=10),
     colorway=["#3a9eff", "#ff5e5e", "#3ecf6e", "#ffa640", "#c063e8", "#5ccfff"],
     hoverlabel=dict(
         bgcolor="#08101f",
@@ -32,6 +32,16 @@ PLOTLY_LAYOUT = dict(
         font=dict(family="Plus Jakarta Sans", size=12, color="#d8e8ff"),
     ),
 )
+
+
+def chart_title(text: str, t: int = 16, l: int = 16) -> dict:
+    """Return a Plotly-compatible title dict with consistent padding.
+
+    Use in place of a bare title string so the padding is never overridden:
+        fig.update_layout(title=chart_title("My Title"), ...)
+    """
+    return dict(text=text, pad=dict(t=t, l=l))
+
 
 PLOTLY_CONFIG = {
     "displayModeBar": True,
@@ -74,7 +84,7 @@ _CUSTOM_CSS = """
     [data-testid="stSidebar"] .stMarkdown p,
     [data-testid="stSidebar"] .stMarkdown li {
         color: #6a8aa8;
-        font-size: 12px;
+        font-size: 13px;
     }
     [data-testid="stSidebarNav"] {
         display: none;
@@ -99,7 +109,7 @@ _CUSTOM_CSS = """
     }
     .kpi-label {
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 700;
         letter-spacing: 1.5px;
         text-transform: uppercase;
@@ -115,7 +125,7 @@ _CUSTOM_CSS = """
         letter-spacing: -0.5px;
     }
     .kpi-delta {
-        font-size: 11px;
+        font-size: 13px;
         margin-top: 6px;
         font-weight: 500;
     }
@@ -134,14 +144,14 @@ _CUSTOM_CSS = """
     .section-header h2 {
         margin: 0;
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 16px;
+        font-size: 17px;
         font-weight: 700;
         color: #c0d4ee;
         letter-spacing: 0.3px;
     }
     .section-header p {
         margin: 4px 0 0 0;
-        font-size: 11px;
+        font-size: 13px;
         color: #7aa6c8;
     }
 
@@ -156,7 +166,7 @@ _CUSTOM_CSS = """
     .stSelectbox label, .stMultiSelect label, .stSlider label, .stRadio label {
         color: #5a8aaa !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 11px !important;
+        font-size: 12px !important;
         font-weight: 700 !important;
         letter-spacing: 0.8px !important;
         text-transform: uppercase !important;
@@ -175,7 +185,7 @@ _CUSTOM_CSS = """
         border: 1px solid #152035;
         border-bottom: none;
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 600;
         letter-spacing: 0.3px;
         padding: 12px 24px;
@@ -189,7 +199,7 @@ _CUSTOM_CSS = """
     hr { border-color: #152035; }
 
     .caption-text {
-        font-size: 10px;
+        font-size: 12px;
         color: #2a4a6a;
         text-align: center;
         margin-top: 4px;
@@ -211,7 +221,7 @@ _CUSTOM_CSS = """
         border-left: 3px solid #3a9eff;
         border-radius: 8px;
         padding: 20px 24px;
-        font-size: 12px;
+        font-size: 14px;
         color: #9cc4e8;
         line-height: 1.6;
         margin-top: 8px;
@@ -227,7 +237,7 @@ _CUSTOM_CSS = """
     }
     .filter-bar-label {
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 700;
         letter-spacing: 1.5px;
         text-transform: uppercase;
@@ -246,7 +256,7 @@ _CUSTOM_CSS = """
         border-radius: 999px;
         color: #9cc4e8;
         display: inline-flex;
-        font-size: 11px;
+        font-size: 13px;
         font-weight: 600;
         line-height: 1;
         padding: 8px 10px;
@@ -254,7 +264,7 @@ _CUSTOM_CSS = """
     }
     .chart-helper {
         color: #7aa6c8;
-        font-size: 11px;
+        font-size: 13px;
         line-height: 1.55;
         margin: -6px 0 12px 0;
     }
@@ -265,7 +275,7 @@ _CUSTOM_CSS = """
         border-radius: 8px !important;
         color: #d0e6ff !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 12px !important;
+        font-size: 13px !important;
         font-weight: 700 !important;
         min-height: 40px;
     }
@@ -282,7 +292,7 @@ _CUSTOM_CSS = """
         color: #d0e6ff !important;
         display: flex;
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 700;
         margin-bottom: 8px;
         min-height: 40px;
