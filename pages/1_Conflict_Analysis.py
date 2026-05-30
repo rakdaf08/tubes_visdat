@@ -81,10 +81,6 @@ with st.sidebar:
 st.markdown(
     """
     <div style='padding: 28px 0 8px 0;'>
-        <div style='font-size:10px; letter-spacing:4px; color:#3a7eff; font-weight:700;
-                    font-family: Plus Jakarta Sans, sans-serif; text-transform:uppercase; margin-bottom:10px;'>
-            Deep Analysis
-        </div>
         <h1 style='font-family: Plus Jakarta Sans, sans-serif; font-size:32px; font-weight:800;
                    color:#ffffff; margin:0; line-height:1.1; letter-spacing:-0.5px;'>
             🌍 Conflict Analysis
@@ -136,14 +132,6 @@ with fc2:
         default=EVENT_TYPES,
         key="conflict_events",
     )
-
-filter_summary(
-    [
-        ("Years", f"{year_range[0]} - {year_range[1]}"),
-        ("Countries", f"{len(selected_countries) or len(COUNTRIES)} selected"),
-        ("Event types", f"{len(selected_events) or len(EVENT_TYPES)} selected"),
-    ]
-)
 
 # ── Apply filters ─────────────────────────────────────────────────────────
 active_countries = selected_countries if selected_countries else COUNTRIES

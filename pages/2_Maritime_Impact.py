@@ -71,10 +71,6 @@ with st.sidebar:
 st.markdown(
     """
     <div style='padding: 28px 0 8px 0;'>
-        <div style='font-size:10px; letter-spacing:4px; color:#3ecf6e; font-weight:700;
-                    font-family: Plus Jakarta Sans, sans-serif; text-transform:uppercase; margin-bottom:10px;'>
-            Trade & Shipping
-        </div>
         <h1 style='font-family: Plus Jakarta Sans, sans-serif; font-size:32px; font-weight:800;
                    color:#ffffff; margin:0; line-height:1.1; letter-spacing:-0.5px;'>
             🚢 Maritime Impact
@@ -97,35 +93,6 @@ if not PASSAGES:
     )
     st.stop()
 
-# ── Page-local filters ────────────────────────────────────────────────────
-filter_title, filter_reset = st.columns([4, 1])
-with filter_title:
-    st.markdown(
-        "<div class='filter-bar-label'>🛳️ Page Filters — Maritime Passages</div>",
-        unsafe_allow_html=True,
-    )
-with filter_reset:
-    st.button("Reset Filters", on_click=reset_maritime_filters, key="reset_maritime")
-
-selected_passages = st.multiselect(
-    "Select Passages to Display",
-    options=PASSAGES,
-    default=DEFAULT_PASSAGES,
-    key="maritime_passages",
-)
-
-filter_summary(
-    [
-        ("Passages", f"{len(selected_passages) or len(PASSAGES)} selected"),
-        ("Ship data", f"{df_ship['date'].min():%b %Y} - {df_ship['date'].max():%b %Y}"),
-        ("Crisis marker", "Nov 2023"),
-    ]
-)
-
-# ── Resolve active passages ────────────────────────────────────────────────
-active_passages = selected_passages if selected_passages else PASSAGES
-ship_plot = df_ship[df_ship["Passage"].isin(active_passages)].copy()
-
 # Pre-compute KPIs used in insight box
 suez_pre_v = passage_mean(df_ship, "Suez", "pre")
 suez_post_v = passage_mean(df_ship, "Suez", "post")
@@ -143,6 +110,22 @@ section_header(
     "Suez Canal traffic decline vs Cape of Good Hope surge — "
     "direct economic impact of the Red Sea Crisis",
 )
+
+col_ms, col_btn = st.columns([8, 1], vertical_alignment="bottom")
+with col_ms:
+    selected_passages = st.multiselect(
+        "Select Passages to Display",
+        options=PASSAGES,
+        default=DEFAULT_PASSAGES,
+        key="maritime_passages",
+    )
+with col_btn:
+    st.button("Reset Filters", on_click=reset_maritime_filters, key="reset_maritime", width="stretch")
+
+# ── Resolve active passages ────────────────────────────────────────────────
+active_passages = selected_passages if selected_passages else PASSAGES
+ship_plot = df_ship[df_ship["Passage"].isin(active_passages)].copy()
+
 chart_note(
     "Hover across the same week to compare routes. The red marker anchors the Houthi crisis onset so the pre/post shift is visible without changing pages."
 )

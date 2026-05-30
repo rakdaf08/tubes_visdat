@@ -56,7 +56,7 @@ st.markdown(
         </div>
         <h1 style='font-family: Plus Jakarta Sans, sans-serif; font-size:42px; font-weight:800;
                    color:#ffffff; margin:0; line-height:1; letter-spacing:-1px;'>
-            🌊 Red Sea Crisis
+            Red Sea Crisis
         </h1>
         <p style='font-size:15px; color:#3a6080; margin-top:12px; font-weight:400;
                   font-family: Plus Jakarta Sans, sans-serif; max-width:580px;
@@ -126,71 +126,20 @@ st.markdown("<br>", unsafe_allow_html=True)
 st.markdown(
     f"""
     <div class='insight-box'>
-    📊 <strong>Overview:</strong> Across all recorded data, the Middle East region logged
-    <strong style='color:#ffffff;'>{total_events:,} conflict events</strong>
-    causing <strong style='color:#ff5e5e;'>{total_fatalities:,} fatalities</strong>.
-    The Houthi crisis onset in <strong>November 2023</strong> triggered a
-    <strong style='color:#ff5e5e;'>{suez_change:+.1f}%</strong> change in
-    weekly Suez Canal crossings, while Cape of Good Hope traffic shifted
-    <strong style='color:#3ecf6e;'>{cape_change:+.1f}%</strong> —
-    evidence of a large-scale rerouting of global maritime trade.
+        Across all recorded data, the Middle East region logged
+        <strong style='color:#ffffff;'>{total_events:,} conflict events</strong>
+        causing <strong style='color:#ff5e5e;'>{total_fatalities:,} fatalities</strong>.
+        The Houthi crisis onset in <strong>November 2023</strong> triggered a
+        <strong style='color:#ff5e5e;'>{suez_change:+.1f}%</strong> change in
+        weekly Suez Canal crossings, while Cape of Good Hope traffic shifted
+        <strong style='color:#3ecf6e;'>{cape_change:+.1f}%</strong> —
+        evidence of a large-scale rerouting of global maritime trade.
     </div>
     """,
     unsafe_allow_html=True,
 )
 
 st.markdown("<br>", unsafe_allow_html=True)
-
-# ── Navigation cards ──────────────────────────────────────────────────────
-section_header(
-    "Explore the Dashboard",
-    "Use the sidebar navigation or the cards below to dive deeper",
-)
-
-nav1, nav2 = st.columns(2)
-
-with nav1:
-    st.markdown(
-        """
-        <div class='kpi-card' style='text-align:left; padding:32px 36px; min-height:180px;'>
-            <div style='font-size:28px; margin-bottom:10px;'>🌍</div>
-            <div style='font-family:Plus Jakarta Sans,sans-serif; font-size:15px; font-weight:700;
-                        color:#c0d4ee; margin-bottom:8px;'>Conflict Analysis</div>
-            <div style='font-size:12px; color:#4a7aaa; line-height:1.6;'>
-                Regional conflict landscape, country-level breakdown, Yemen &amp;
-                Houthi deep-dive — attack types, timeline, and word cloud.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    st.page_link(
-        "pages/1_Conflict_Analysis.py",
-        label="Open Conflict Analysis",
-        icon="🌍",
-    )
-
-with nav2:
-    st.markdown(
-        """
-        <div class='kpi-card' style='text-align:left; padding:32px 36px; min-height:180px;
-                                      border-top-color:#3ecf6e;'>
-            <div style='font-size:28px; margin-bottom:10px;'>🚢</div>
-            <div style='font-family:Plus Jakarta Sans,sans-serif; font-size:15px; font-weight:700;
-                        color:#c0d4ee; margin-bottom:8px;'>Maritime Impact</div>
-            <div style='font-size:12px; color:#4a7aaa; line-height:1.6;'>
-                Weekly ship crossings, passage traffic shares (pre vs post-crisis),
-                quarterly trends, and Conflict–Trade correlation analysis.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    st.page_link(
-        "pages/2_Maritime_Impact.py",
-        label="Open Maritime Impact",
-        icon="🚢",
-    )
 
 # ── Footer ────────────────────────────────────────────────────────────────
 page_footer()
