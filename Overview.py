@@ -40,7 +40,7 @@ ship_max = df_ship["date"].max().strftime("%b %Y")
 # ── Sidebar — brand + footer ────
 with st.sidebar:
     sidebar_brand()
-    st.page_link("main.py", label="Overview")
+    st.page_link("Overview.py", label="Overview")
     st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis")
     st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact")
     sidebar_footer()
