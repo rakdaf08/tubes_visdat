@@ -27,7 +27,6 @@ warnings.filterwarnings("ignore")
 # ── Page config — MUST be first Streamlit call ────────────────────────────
 st.set_page_config(
     page_title="Conflict Analysis · Red Sea Crisis",
-    page_icon="🌍",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -74,20 +73,20 @@ def reset_conflict_filters():
 # ── Sidebar — brand + footer ──────────────
 with st.sidebar:
     sidebar_brand()
-    st.page_link("main.py", label="Overview", icon="🌊")
-    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis", icon="🌍")
-    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact", icon="🚢")
+    st.page_link("main.py", label="Overview")
+    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis")
+    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact")
     sidebar_footer()
 
 # ── Page header ───────────────────────────────────────────────────────────
 st.markdown(
     """
-    <div>
+    <div style='text-align:center; margin-bottom: 32px;'>
         <h1 style='font-family: Plus Jakarta Sans, sans-serif; font-size:32px; font-weight:800;
-                   color:#ffffff; margin:0; line-height:1.1; letter-spacing:-0.5px;'>
-            🌍 Conflict Analysis
+                   color:#ffffff; margin-bottom:0px; padding-bottom:0px; letter-spacing:-0.5px;'>
+            Conflict Analysis
         </h1>
-        <p style='font-size:13px; color:#3a6080; margin-top:8px;
+        <p style='font-size:16px; color:#d9d9d9; margin-top:0px; padding-top:4px;
                   font-family: Plus Jakarta Sans, sans-serif;'>
             Regional conflict landscape &amp; Yemen · Houthi deep-dive
         </p>
@@ -277,7 +276,7 @@ with tab_general:
             yaxis=dict(gridcolor="rgba(0,0,0,0)"),
             showlegend=False,
         )
-        st.plotly_chart(fig_bar, width="stretch", config=PLOTLY_CONFIG)
+        st.plotly_chart(fig_bar, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
 
     # ── Conflict Composition ──────────────────────────────────────────────────
     section_header(
@@ -296,6 +295,11 @@ with tab_general:
             .sum()
             .sort_values("EVENTS", ascending=True)
         )
+        type_data["EVENT_TYPE"] = type_data["EVENT_TYPE"].replace({
+            "Explosions/Remote violence": "Explosions/<br>Remote violence",
+            "Strategic developments": "Strategic<br>developments",
+            "Violence against civilians": "Violence<br>against civilians",
+        })
         fig_type = go.Figure(
             go.Bar(
                 y=type_data["EVENT_TYPE"],
@@ -325,7 +329,7 @@ with tab_general:
             yaxis=dict(gridcolor="rgba(0,0,0,0)", title=""),
             showlegend=False,
         )
-        st.plotly_chart(fig_type, width="stretch", config=PLOTLY_CONFIG)
+        st.plotly_chart(fig_type, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
 
     with col_line:
         trend_data = conf_filtered.copy()
@@ -374,7 +378,7 @@ with tab_yemen:
     st.markdown("<br>", unsafe_allow_html=True)
 
     section_header(
-        "🎯 Zooming In: Yemen & Houthi Deep-Dive",
+        "Zooming In: Yemen & Houthi Deep-Dive",
         "Granular analysis of conflict sub-types — drone strikes, missile attacks, armed clashes",
         variant="deep-dive",
     )
@@ -451,11 +455,11 @@ with tab_yemen:
                 },
                 title=chart_title("Yemen: Top Attack Types and Cumulative Share"),
                 height=400,
-                xaxis=dict(gridcolor="#152035", tickangle=-35, title=""),
+                xaxis=dict(gridcolor="#152035", tickangle=-35, tickfont=dict(size=10), title=""),
                 yaxis=dict(gridcolor="#152035", title="Events"),
                 yaxis2=dict(title="Cumulative Share", range=[0, 105], ticksuffix="%"),
             )
-            st.plotly_chart(fig_sub, width="stretch", config=PLOTLY_CONFIG)
+            st.plotly_chart(fig_sub, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
 
         with col_b:
             sub_bar = sub_data.sort_values("EVENTS", ascending=True)
@@ -480,7 +484,7 @@ with tab_yemen:
                 yaxis=dict(gridcolor="rgba(0,0,0,0)"),
                 showlegend=False,
             )
-            st.plotly_chart(fig_sub_bar, width="stretch", config=PLOTLY_CONFIG)
+            st.plotly_chart(fig_sub_bar, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
 
         # ── Timeline ──────────────────────────────────────────────────────────
         section_header(
@@ -600,6 +604,7 @@ with tab_yemen:
                     relative_scaling=0.5,
                     min_font_size=11,
                     max_font_size=95,
+                    font_path="asset/font/PlusJakartaSans-Bold.ttf",
                 ).generate_from_frequencies(wc_combined)
 
                 fig_wc, ax_wc = plt.subplots(figsize=(11, 4))
@@ -614,11 +619,10 @@ with tab_yemen:
         with col_wc_info:
             st.markdown(
                 """
-                <div style='padding:14px; background:#0b1628; border:1px solid #152840;
-                            border-radius:8px; margin-top:8px;'>
-                <div style='font-family:Plus Jakarta Sans,sans-serif; font-size:10px; color:#3a9eff;
+                
+                <div style='font-family:Plus Jakarta Sans,sans-serif; font-size:16px; color:85AEF0;
                             font-weight:700; letter-spacing:1px; text-transform:uppercase;
-                            margin-bottom:12px;'>Top Attack Types</div>
+                            margin-bottom:4px;'>Top Attack Types</div>
                 """,
                 unsafe_allow_html=True,
             )
@@ -630,13 +634,13 @@ with tab_yemen:
                 st.markdown(
                     f"""
                     <div style='margin-bottom:12px;'>
-                        <div style='font-size:11px; color:#c0d4ee; font-weight:500;'>{k}</div>
+                        <div style='font-size:12px; color:#ffffff; font-weight:600;'>{k}</div>
                         <div style='background:#152035; border-radius:3px; height:5px; margin-top:5px;'>
                             <div style='background:#ff5e5e; width:{min(pct, 100):.0f}%;
                                         height:5px; border-radius:3px;'></div>
                         </div>
-                        <div style='font-size:10px; color:#3a6080; margin-top:3px;'>
-                            {v:,} events ({pct:.1f}%)
+                        <div style='font-size:12px; color:#d0e6ff; margin-top:4px;'>
+                            <strong style='color:#ffffff'>{v:,}</strong> events ({pct:.1f}%)
                         </div>
                     </div>
                     """,

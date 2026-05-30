@@ -20,7 +20,6 @@ warnings.filterwarnings("ignore")
 # ── Page config — MUST be first Streamlit call ────────────────────────────
 st.set_page_config(
     page_title="Maritime Impact · Red Sea Crisis",
-    page_icon="🚢",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -64,20 +63,20 @@ def reset_maritime_filters():
 # ── Sidebar — brand + footer ──────────────
 with st.sidebar:
     sidebar_brand()
-    st.page_link("main.py", label="Overview", icon="🌊")
-    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis", icon="🌍")
-    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact", icon="🚢")
+    st.page_link("main.py", label="Overview")
+    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis")
+    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact")
     sidebar_footer()
 
 # ── Page header ───────────────────────────────────────────────────────────
 st.markdown(
     """
-    <div>
+    <div style='text-align:center; margin-bottom: 12px;'>
         <h1 style='font-family: Plus Jakarta Sans, sans-serif; font-size:32px; font-weight:800;
-                   color:#ffffff; margin:0; line-height:1.1; letter-spacing:-0.5px;'>
-            🚢 Maritime Impact
+                   color:#ffffff; margin-bottom:0px; padding-bottom:0px; letter-spacing:-0.5px;'>
+            Maritime Impact
         </h1>
-        <p style='font-size:13px; color:#3a6080; margin-top:8px;
+        <p style='font-size:16px; color:#d9d9d9; margin-top:0px; padding-top:4px;
                   font-family: Plus Jakarta Sans, sans-serif;'>
             Suez Canal traffic decline, Cape of Good Hope surge &amp;
             Conflict–Trade correlation
@@ -168,7 +167,7 @@ fig_line.add_annotation(
     x="2023-11-01",
     y=1,
     yref="paper",
-    text="  🔴 Crisis Onset (Nov 2023)",
+    text="     Crisis Onset (Nov 2023)",
     showarrow=False,
     font=dict(color="#ff5e5e", size=11, family="Plus Jakarta Sans"),
     xanchor="left",
@@ -190,7 +189,7 @@ if suez_change != 0 and cape_change != 0:
     st.markdown(
         f"""
         <div class='insight-box'>
-        📊 <strong>Key Insight:</strong> Following the Houthi crisis onset in November 2023,
+        <strong>Key Insight:</strong> Following the Houthi crisis onset in November 2023,
         weekly Suez Canal crossings changed by
         <strong style='color:#ff5e5e;'>{suez_change:+.1f}%</strong> on average,
         while Cape of Good Hope traffic shifted by
@@ -270,7 +269,7 @@ with col_share:
             xaxis=dict(title=""),
             yaxis=dict(title="Share of Crossings", ticksuffix="%", range=[0, 100]),
         )
-        st.plotly_chart(fig_share, width="stretch", config=PLOTLY_CONFIG)
+        st.plotly_chart(fig_share, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
     else:
         st.info("No route-share data for the active passages.")
 
@@ -302,7 +301,7 @@ with col_qbar:
         xaxis=dict(gridcolor="#152035", title="Quarter", tickangle=-45),
         yaxis=dict(gridcolor="#152035", title="Crossings"),
     )
-    st.plotly_chart(fig_qbar, width="stretch", config=PLOTLY_CONFIG)
+    st.plotly_chart(fig_qbar, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
 
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 3 — Conflict–Trade Correlation
@@ -412,7 +411,7 @@ if not suez_monthly_df.empty:
     st.markdown(
         f"""
         <div class='insight-box'>
-        📉 <strong>Correlation guide:</strong> The raw monthly correlation between Yemen events
+        <strong>Correlation guide:</strong> The raw monthly correlation between Yemen events
         and Suez crossings is <strong style='color:#ffffff;'>{corr_label}</strong>. Treat this
         as directional context, not proof of causality, because routing decisions are also shaped
         by insurance, carrier policy, and global demand.

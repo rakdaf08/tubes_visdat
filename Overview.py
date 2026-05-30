@@ -10,7 +10,6 @@ import pandas as pd
 # ── Page config MUST be the very first Streamlit call ─────────────────────
 st.set_page_config(
     page_title="Red Sea Crisis Dashboard",
-    page_icon="🚢",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -41,25 +40,25 @@ ship_max = df_ship["date"].max().strftime("%b %Y")
 # ── Sidebar — brand + footer ────
 with st.sidebar:
     sidebar_brand()
-    st.page_link("main.py", label="Overview", icon="🌊")
-    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis", icon="🌍")
-    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact", icon="🚢")
+    st.page_link("main.py", label="Overview")
+    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis")
+    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact")
     sidebar_footer()
 
 # ── Hero header ───────────────────────────────────────────────────────────
 st.markdown(
     """
     <div style='text-align:center; padding: 56px 0 48px 0;'>
-        <div style='font-size:10px; letter-spacing:4px; color:#3a7eff; font-weight:700;
+        <div style='font-size:12px; letter-spacing:4px; color:#85AEF0; font-weight:700;
                     font-family: Plus Jakarta Sans, sans-serif; text-transform:uppercase; margin-bottom:12px;'>
             Analytical Dashboard
         </div>
-        <h1 style='font-family: Plus Jakarta Sans, sans-serif; font-size:42px; font-weight:800;
+        <div style='font-family: Plus Jakarta Sans, sans-serif; font-size:42px; font-weight:800;
                    color:#ffffff; margin:0; line-height:1; letter-spacing:-1px;'>
             Red Sea Crisis
-        </h1>
-        <p style='font-size:15px; color:#3a6080; margin-top:12px; font-weight:400;
-                  font-family: Plus Jakarta Sans, sans-serif; max-width:580px;
+        </div>
+        <p style='font-size:24px; color:#fafafa; margin-top:12px; font-weight:700;
+                  font-family: Plus Jakarta Sans, sans-serif; max-width:720px;
                   margin-left:auto; margin-right:auto;'>
             Houthi Conflict &amp; Its Impact on Global Maritime Trade
         </p>
@@ -122,15 +121,23 @@ st.markdown(
         Across all recorded data, the Middle East region logged
         <strong style='color:#ffffff;'>{total_events:,} conflict events</strong>
         causing <strong style='color:#ff5e5e;'>{total_fatalities:,} fatalities</strong>.
-        The Houthi crisis onset in <strong>November 2023</strong> triggered a
+        The Houthi crisis onset in <strong style='color:#ffffff;'>November 2023</strong> triggered a
         <strong style='color:#ff5e5e;'>{suez_change:+.1f}%</strong> change in
         weekly Suez Canal crossings, while Cape of Good Hope traffic shifted
-        <strong style='color:#3ecf6e;'>{cape_change:+.1f}%</strong> —
+        <strong style='color:#3ecf6e;'>{cape_change:+.1f}%</strong>, which is an
         evidence of a large-scale rerouting of global maritime trade.
     </div>
     """,
     unsafe_allow_html=True,
 )
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+col_spacer1, col_nav1, col_nav2, col_spacer2 = st.columns([2, 2, 2, 2])
+with col_nav1:
+    st.page_link("pages/1_Conflict_Analysis.py", label="Go to Conflict Analysis", use_container_width=True)
+with col_nav2:
+    st.page_link("pages/2_Maritime_Impact.py", label="Go to Maritime Impact", use_container_width=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
