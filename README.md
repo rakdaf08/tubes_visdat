@@ -7,7 +7,7 @@ Dashboard Analitis Interaktif yang dibangun menggunakan **Streamlit** untuk memv
 ## 📌 Identifikasi & Deskripsi Aplikasi (`main.py`)
 
 Aplikasi utama dijalankan melalui berkas `main.py`. Dashboard ini memiliki beberapa fitur utama:
-1. **Regional Conflict Overview (Tab 1)**: Visualisasi persebaran dan intensitas konflik di Timur Tengah berdasarkan negara, visualisasi spasial menggunakan peta interaktif Mapbox yang di-overlay dengan rute pelayaran laut utama (*shipping lanes*), serta tren konflik bulanan.
+1. **Regional Conflict Overview (Tab 1)**: Visualisasi persebaran dan intensitas konflik di Timur Tengah berdasarkan negara, visualisasi spasial menggunakan peta interaktif Maplibre yang di-overlay dengan rute pelayaran laut utama (*shipping lanes*), serta tren konflik bulanan.
 2. **Yemen & Houthi Deep-Dive (Tab 2)**: Analisis mendalam tipe serangan (misal: serangan drone, rudal, bentrokan bersenjata), timeline bulanan kejadian dan korban jiwa di Yaman, serta visualisasi Word Cloud dari tipe sub-kejadian (*sub-event type*).
 3. **Maritime Impact (Tab 3)**: Grafik lalu lintas mingguan kapal di berbagai selat/terusan utama, perbandingan pangsa lalu lintas sebelum dan sesudah krisis (*Pre-Crisis* vs *Post-Crisis*), serta grafik korelasi antara intensitas konflik di Yaman dengan rata-rata penyeberangan mingguan di Terusan Suez.
 

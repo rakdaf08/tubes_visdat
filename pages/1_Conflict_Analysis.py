@@ -187,7 +187,7 @@ with col_map:
         map_data = map_data.rename(columns={lat_col: "LAT", lon_col: "LON"})
         map_data = map_data.dropna(subset=["LAT", "LON"])
 
-        fig_map = px.scatter_mapbox(
+        fig_map = px.scatter_map(
             map_data,
             lat="LAT",
             lon="LON",
@@ -200,7 +200,7 @@ with col_map:
             opacity=0.6,
             zoom=3.5,
             center={"lat": 24, "lon": 42},
-            mapbox_style="carto-darkmatter",
+            map_style="carto-darkmatter",
             title="Conflict Intensity by Country",
         )
 
@@ -215,7 +215,7 @@ with col_map:
                     lines = [coords_raw] if geom["type"] == "LineString" else coords_raw
                     for line in lines:
                         fig_map.add_trace(
-                            go.Scattermapbox(
+                            go.Scattermap(
                                 lon=[c[0] for c in line],
                                 lat=[c[1] for c in line],
                                 mode="lines",
@@ -238,6 +238,7 @@ with col_map:
                 bordercolor="#152035",
             ),
         )
+        # fig_map.update_layout(margin=dict(l=40, r=40, t=40, b=40))
         st.plotly_chart(fig_map, width="stretch", config=PLOTLY_CONFIG)
         st.markdown(
             "<p class='caption-text'>Blue lines = major shipping lanes · "
