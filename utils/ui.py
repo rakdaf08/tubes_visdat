@@ -171,7 +171,7 @@ _CUSTOM_CSS = """
     .stTabs [data-baseweb="tab"] {
         background-color: #080e1a;
         color: #3a6080;
-        border-radius: 12px 12px 0 0;
+        border-radius: 6px 6px 0 0;
         border: 1px solid #152035;
         border-bottom: none;
         font-family: 'Plus Jakarta Sans', sans-serif;
