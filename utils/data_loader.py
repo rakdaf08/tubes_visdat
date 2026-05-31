@@ -64,6 +64,9 @@ def load_data():
         lambda x: "Post-Crisis (Nov 2023+)" if x >= pd.Timestamp("2023-11-01") else "Pre-Crisis"
     )
 
+    # Filter out peaceful protests to keep focus on armed conflict and maritime disruption
+    df_conf = df_conf[~df_conf["SUB_EVENT_TYPE"].isin(["Peaceful protest", "Protest with intervention"])]
+
     # ── Ship crossings ────────────────────────────────────────────────────
     ship_candidates = [
         "ship_crossings.csv",
@@ -184,6 +187,8 @@ def load_trade_data():
         df_hs2 = df_hs2_raw.iloc[2:].copy()
         df_hs2.columns = ["Product Category", "Passage", "2020", "2021", "2022", "2023", "2024"]
         df_hs2 = df_hs2.reset_index(drop=True)
+        # Store full name for tooltips
+        df_hs2["Full Product Category"] = df_hs2["Product Category"].apply(lambda x: str(x) if pd.notna(x) else x)
         # Clean product labels: keep only the part after the dash
         def shorten_label(label):
             if pd.isna(label):
