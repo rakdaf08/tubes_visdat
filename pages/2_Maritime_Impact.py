@@ -60,12 +60,9 @@ def reset_maritime_filters():
     st.session_state.maritime_passages = DEFAULT_PASSAGES
 
 
-# ── Sidebar — brand + footer ──────────────
+# ── Sidebar — brand + nav + footer ───────────────────────────────────────
 with st.sidebar:
     sidebar_brand()
-    st.page_link("Overview.py", label="Overview")
-    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis")
-    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact")
     sidebar_footer()
 
 # ── Page header ───────────────────────────────────────────────────────────

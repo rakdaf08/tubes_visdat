@@ -140,7 +140,7 @@ _CUSTOM_CSS = """
 
     /* Section headers */
     .section-header {
-        margin: 32px 0 16px 0;
+        margin: 24px 0 16px 0;
     }
     .section-header h2 {
         margin-bottom: 4px;
@@ -313,21 +313,10 @@ _CUSTOM_CSS = """
         height: 18px;
         background-size: contain;
         background-repeat: no-repeat;
-        margin-right: 12px;
+        margin-right: 4px;
         flex-shrink: 0;
     }
-    [data-testid="stPageLink"] a::after {
-        content: "";
-        display: inline-block;
-        width: 14px;
-        height: 14px;
-        background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTAiIGhlaWdodD0iOTAiIHZpZXdCb3g9IjAgMCA5MCA5MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CjxyZWN0IHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgZmlsbD0idXJsKCNwYXR0ZXJuMF8yMDFfNikiLz4KPGRlZnM+CjxwYXR0ZXJuIGlkPSJwYXR0ZXJuMF8yMDFfNiIgcGF0dGVybkNvbnRlbnRVbml0cz0ib2JqZWN0Qm91bmRpbmdCb3giIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPgo8dXNlIHhsaW5rOmhyZWY9IiNpbWFnZTBfMjAxXzYiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMTExMTExKSIvPgo8L3BhdHRlcm4+CjxpbWFnZSBpZD0iaW1hZ2UwXzIwMV82IiB3aWR0aD0iOTAiIGhlaWdodD0iOTAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHhsaW5rOmhyZWY9ImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBRm9BQUFCYUNBWUFBQUE0cUVFQ0FBQUFDWEJJV1hNQUFBc1RBQUFMRXdFQW1wd1lBQUFCSTBsRVFWUjRuTzNhUVU0VVFSaUEwZEVGb09Ia2JGZ1lFM1RESFZ3QWQzS2hVWUhsWnliMHlqalRFTG9MR2Q4N1FIWGxXM1NxcS8vTkJnQUFBQUFBQUFBQUFBNUw5YTc2VlAycXZsWm4xZkZMNyt2ZzlCRDVUMWRpTDZoNlUvMzhTMml4bDFiOTJCRmE3Q1ZWNTN0Q2k3MlViY1FwcHRocnE0NnFMek94YjZxVDFUZHo2Qko3SExFSEVuc2dzUWNTZXlDeEJ4TDdOY2F1M2xjZnErOHppekgvQmJrN2RuVXhzd0NQOTNsWDVMZlYzUk1XWXIvYmJWT2hYeXEwVjhmaUx1YittMzJvdmkzLzNQL0t0V1BlTXpoTER5RHlBQ0lQSVBJQUlnOGc4Z0FpRHlEeUFDTC9Xd00wSWovSGRQVWc4cHFtbTh2dGJadklBMExmNzRsczNtNHAxYVhJQTFTblUrejdhU2g5TzhZcjhwclQvNnN0RGdBQUFBQUFBQUFBc0ZuVGI3Q2FVU2ROVGFkUEFBQUFBRWxGVGtTdVFtQ0MiLz4KPC9kZWZzPgo8L3N2Zz4K");
-        background-size: contain;
-        background-repeat: no-repeat;
-        margin-left: auto;
-        flex-shrink: 0;
-        opacity: 0.6;
-    }
+    
 
     [data-testid="stPageLink"] a:not([href*="Conflict_Analysis"]):not([href*="Maritime_Impact"])::before {
         background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTAiIGhlaWdodD0iOTAiIHZpZXdCb3g9IjAgMCA5MCA5MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CjxyZWN0IHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgZmlsbD0idXJsKCNwYXR0ZXJuMF8yMDFfMykiLz4KPGRlZnM+CjxwYXR0ZXJuIGlkPSJwYXR0ZXJuMF8yMDFfMyIgcGF0dGVybkNvbnRlbnRVbml0cz0ib2JqZWN0Qm91bmRpbmdCb3giIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPgo8dXNlIHhsaW5rOmhyZWY9IiNpbWFnZTBfMjAxXzMiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMTExMTExKSIvPgo8L3BhdHRlcm4+CjxpbWFnZSBpZD0iaW1hZ2UwXzIwMV8zIiB3aWR0aD0iOTAiIGhlaWdodD0iOTAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHhsaW5rOmhyZWY9ImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBRm9BQUFCYUNBWUFBQUE0cUVFQ0FBQUFDWEJJV1hNQUFBc1RBQUFMRXdFQW1wd1lBQUFEZzBsRVFWUjRuTzJjVFdvVVFSU0FteXhpZENPdWpERnJSUThnNkFVa2lrZlFFNmdieGNSVmRHR1dJa1p4NGhtTU4xQndZY1NWRW5IakR5aEVVQkIvRU9NMGlwOFVVeEZOdXJxN2FycGZkOWU4RDVvTVlhcnExZGRWcjZzbW1Vb1NSVkVVUlZHNkJURFdkQXhSQTJ3SGJnQmY3TFZvZnRkMFhORUJYR01yVjV1T0t6cUE5eG1pUHpRZFYzVGdvT200b2dNVkxRTXhpUVoyQURmdFUxMEo0N05kSGJsWFJFQXZzSEpsS3oyWDVERmdQYU9BRXNiM3pNMlZpaFlTcmFtamNtNFZiWE1YYlVKWHd2Z0VYQy85OFVCZ0l5TlA0a3ZUQVhjVkZTMkVpaFpDUlF1aG9vVlEwVUtvYUNGVXRCQXF1cGcrTUF0TTJzdThUdkZFUlJkTG5zbHdNSWNuS3RxTkdiVW5IQTUyNDRtSzlwUnNIVXpoaVlvdW1TNDJPYmlJSnlyYVgvS01mWjhYS3Jwa3VyQjlQd3I4SUFBVkxTRFpvS0twWDNLWFJmY3pOaEg5TnVYa0dFU25XU013WU5TSmpPU3VpazRMMXJkbHhZaEs3cHJvdEVoT1NVSGlrcnNrT2kwanVZU29SaVIzUlhUcUl6bEhXR09TbXhDZGVxNFcra1dyZ3BJckJySFZSVnRFejNwMHNGOVNUbFh2cVUyeXdVUHgzNkNHWWJLR2FaNkdwSmFjdG1zaEpMREtSZnVLQzdreEpldXBEV25SY3pWTzg3NVBQcGRJRi8vaTQzZ2p3R0dvNnVFMlZQM1NrcHNRTFRITjA0cDJqNTBYWGVVR3BPN1BRem92V21LYTkrMWZxL2ZZYTA0NlhiUkZkR3VuZVl5aVd6bk5ZeFhkdW1rZXMram9VZEZDcUdnaFZMUVFLbG9JRlMyRWloWkNSUXVob2xzcytwdFVjQkh4TlVUMDQ2YWo3aUNQUWtTZmJUcnFEbkk2UlBRMjRHblRrWGVJSjhDNHQyZ3JlMXBsbDVhOE4wanlwcEY5eHVRZmZVRCtoM0d4WXRKRjhFaHVBbUFDZUVzMmI4d056eWd6RHJ4MmxGblRZNDh6QU03ajVtUk91Vk01NWM2NXlvMGt3RTdnbzBQV2F0NHA2UGE4UHBNalhTZDI3Wkx0VFlzQkZuSkc1YkVTNVkvbmxMOGkwNHVXdytCcndPYlV3eXdlZU5SenoxR0hPWjF5T2hsMWdOczVvL0d3UnoySGdOK09lcGFTVVFiWUQveDB5TGtUVU4reW82NWZ3TUZrVkFIdTVvZzVFRkRmdnB3YnQ1eU1JdVJQOWQ0UTlTN2g1a2d5S2pEWWFacnZ0THh6eURBUHhxbWFIcTVydHUwdG01K29ZSENhNzMzeVdhaDV1WWhkb1V3a3NVTHhRU09WYkRBS05rQWJYRWhpQlhoZTBQblZDdHQ2SnRWVzY2RDR2MGJYSzJ4clhhcXQxZ0c4S3VqOGl5NjIxVHFBeXdXZG4rOWlXMjFkZGF3NE92Nnd5cytQSmR0cUpRd0VYQUplMm04Qm1KL3pkWFJjc2kxRlVaU2tldjRBaFZ1Q3dWc3hJZ2NBQUFBQVNVVk9SSzVDWUlJPSIvPgo8L2RlZnM+Cjwvc3ZnPgo=");
@@ -412,11 +401,25 @@ def sidebar_brand() -> None:
         unsafe_allow_html=True,
     )
     st.markdown("---")
-
-
-def sidebar_footer() -> None:
-    """Render the data-sources footnote at the bottom of the sidebar."""
+    st.page_link("Overview.py", label="Overview")
+    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis")
+    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact")
+    st.page_link("pages/3_Economic_Impact.py", label="Economic Impact")
     st.markdown("---")
+
+
+def sidebar_footer(show_top_divider: bool = False) -> None:
+    """Render the data-sources footnote at the bottom of the sidebar.
+
+    Parameters
+    ----------
+    show_top_divider : bool
+        If True, renders a ``---`` separator above the footer text.
+        Set to True only on pages that have additional sidebar content
+        (e.g. global filters) between the nav links and this footer.
+    """
+    if show_top_divider:
+        st.markdown("---")
     st.markdown(
         """
         <div style='font-size:11px; color:#85AEF0; line-height:1.8; opacity: 80%;'>
@@ -473,6 +476,73 @@ def section_header(title: str, subtitle: str = "", variant: str = "default") -> 
         """,
         unsafe_allow_html=True,
     )
+
+
+def sidebar_global_filters(df_conf) -> tuple:
+    """Render the global year-range and country filters inside the sidebar.
+
+    Must be called inside a ``with st.sidebar:`` block.
+    Reads / writes ``st.session_state`` so values persist across page navigations.
+
+    Parameters
+    ----------
+    df_conf : pd.DataFrame  The conflict DataFrame (used to derive filter ranges/options).
+
+    Returns
+    -------
+    year_range : tuple[int, int]
+    selected_countries : list[str]
+    """
+    import pandas as pd  # local import to avoid circular deps at module level
+
+    COUNTRIES = sorted(df_conf["COUNTRY"].unique().tolist())
+    YEAR_MIN = int(df_conf["YEAR"].min())
+    YEAR_MAX = int(df_conf["YEAR"].max())
+    DEFAULT_YEAR_RANGE = (max(2020, YEAR_MIN), YEAR_MAX)
+    DEFAULT_COUNTRIES = [
+        c for c in ["Yemen", "Israel", "Palestine", "Lebanon"] if c in COUNTRIES
+    ]
+    if not DEFAULT_COUNTRIES:
+        DEFAULT_COUNTRIES = COUNTRIES[:4]
+
+    # Initialise session state on first load
+    if "global_year_range" not in st.session_state:
+        st.session_state.global_year_range = DEFAULT_YEAR_RANGE
+    if "global_countries" not in st.session_state:
+        st.session_state.global_countries = DEFAULT_COUNTRIES
+
+    def _reset():
+        st.session_state.global_year_range = DEFAULT_YEAR_RANGE
+        st.session_state.global_countries = DEFAULT_COUNTRIES
+
+    st.markdown(
+        "<div class='filter-bar-label' style='margin-bottom:8px;'>Global Filters</div>",
+        unsafe_allow_html=True,
+    )
+
+    year_range = st.slider(
+        "Year Range",
+        min_value=YEAR_MIN,
+        max_value=YEAR_MAX,
+        value=st.session_state.global_year_range,
+        step=1,
+        key="global_year_range",
+    )
+
+    selected_countries = st.multiselect(
+        "Countries",
+        options=COUNTRIES,
+        default=st.session_state.global_countries,
+        key="global_countries",
+    )
+
+    st.button(
+        "Reset Filters",
+        on_click=_reset,
+        key="reset_global_filters",
+        use_container_width=True,
+    )
+    return year_range, selected_countries
 
 
 def filter_summary(items: list[tuple[str, str]]) -> None:

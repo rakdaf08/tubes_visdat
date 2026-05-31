@@ -4,13 +4,15 @@ pages/1_Conflict_Analysis.py
 Conflict Analysis page — Regional Landscape + Yemen Deep-Dive.
 
 Layout (top-to-bottom, no tabs):
-  1. Page-local filter bar (Countries, Event Types)
-  2. Macro view  — Regional Conflict Landscape (Map + Bar)
-  3. Macro view  — Conflict Composition (Pie + Trend line)
-  ── divider ──
-  4. Micro view  — Yemen Attack Types (Pie + Bar)
-  5. Micro view  — Yemen Conflict Timeline
-  6. Micro view  — Attack Type Word Cloud
+  1. Page-local filter bar (Event Types only — year+country live in sidebar)
+  2. Tabs: General Analysis | Yemen & Houthi Deep-Dive
+     General tab:
+       - Regional Conflict Landscape (Map + Bar)
+       - Conflict Composition (Type bar + Trend line)
+     Yemen tab:
+       - Yemen Attack Types (Pareto + Bar)
+       - Yemen Conflict Timeline
+       - Attack Type Word Cloud
 """
 
 import streamlit as st
@@ -35,6 +37,7 @@ from utils.ui import (
     init_ui,
     sidebar_brand,
     sidebar_footer,
+    sidebar_global_filters,
     section_header,
     page_footer,
     PLOTLY_LAYOUT,
@@ -63,20 +66,11 @@ DEFAULT_COUNTRIES = [
 if not DEFAULT_COUNTRIES:
     DEFAULT_COUNTRIES = COUNTRIES[:4]
 
-
-def reset_conflict_filters():
-    st.session_state.conflict_year_range = DEFAULT_YEAR_RANGE
-    st.session_state.conflict_countries = DEFAULT_COUNTRIES
-    st.session_state.conflict_events = EVENT_TYPES
-
-
-# ── Sidebar — brand + footer ──────────────
+# ── Sidebar — brand + global filters + footer ──────────────
 with st.sidebar:
     sidebar_brand()
-    st.page_link("Overview.py", label="Overview")
-    st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis")
-    st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact")
-    sidebar_footer()
+    year_range, selected_countries = sidebar_global_filters(df_conf)
+    sidebar_footer(show_top_divider=True)
 
 # ── Page header ───────────────────────────────────────────────────────────
 st.markdown(
@@ -95,53 +89,33 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# ── Read global filters from session state ────────────────────────────────
+year_range = st.session_state.get("global_year_range", DEFAULT_YEAR_RANGE)
+active_countries = st.session_state.get("global_countries", DEFAULT_COUNTRIES)
+if not active_countries:
+    active_countries = COUNTRIES
 
+# ── Tabs ──────────────────────────────────────────────────────────────────
 tab_general, tab_yemen = st.tabs(["General Analysis", "Yemen & Houthi Deep-Dive"])
 
 with tab_general:
     # ══════════════════════════════════════════════════════════════════════════
-    # MACRO VIEW — Regional Conflict Landscape
+    # EVENT TYPE FILTER — scoped to this tab only
     # ══════════════════════════════════════════════════════════════════════════
     with st.container(border=True):
-        filter_title, filter_reset = st.columns([8, 1])
-        with filter_title:
-            st.markdown(
-                "<div class='filter-bar-label'>Conflict Filters</div>",
-                unsafe_allow_html=True,
-            )
-        with filter_reset:
-            st.button(
-                "Reset Filters", on_click=reset_conflict_filters, key="reset_conflict"
-            )
-
-        # Year range — full width
-        year_range = st.slider(
-            "Year Range",
-            min_value=YEAR_MIN,
-            max_value=YEAR_MAX,
-            value=DEFAULT_YEAR_RANGE,
-            step=1,
-            key="conflict_year_range",
+        st.markdown(
+            "<div class='filter-bar-label'>Event Type Filter</div>",
+            unsafe_allow_html=True,
         )
-
-        selected_countries = st.multiselect(
-            "Countries",
-            options=COUNTRIES,
-            default=DEFAULT_COUNTRIES,
-            key="conflict_countries",
-        )
-
         selected_events = st.multiselect(
-            "Event Types",
+            "Filter by event type — affects all charts on this tab",
             options=EVENT_TYPES,
             default=EVENT_TYPES,
             key="conflict_events",
         )
-
-    # ── Apply filters ─────────────────────────────────────────────────────────
-    active_countries = selected_countries if selected_countries else COUNTRIES
     active_events = selected_events if selected_events else EVENT_TYPES
 
+    # ── Apply all filters ────────────────────────────────────────────────────
     conf_filtered = df_conf[
         (df_conf["YEAR"] >= year_range[0])
         & (df_conf["YEAR"] <= year_range[1])
@@ -151,10 +125,13 @@ with tab_general:
 
     if conf_filtered.empty:
         st.warning(
-            "No conflict records match the active filters. Try widening the year, country, or event-type selection."
+            "No records match. Try widening the Year / Country (sidebar) or Event Type filter above."
         )
         st.stop()
 
+    # ══════════════════════════════════════════════════════════════════════════
+    # MACRO VIEW — Regional Conflict Landscape
+    # ══════════════════════════════════════════════════════════════════════════
     section_header(
         "Regional Conflict Landscape",
         "Middle East conflict intensity across countries — Yemen as epicentre of the Red Sea Crisis",
@@ -236,15 +213,14 @@ with tab_general:
                     bordercolor="#152035",
                 ),
             )
-            # fig_map.update_layout(margin=dict(l=40, r=40, t=40, b=40))
-            st.plotly_chart(fig_map, width="stretch", config=PLOTLY_CONFIG)
+            st.plotly_chart(fig_map, use_container_width=True, config=PLOTLY_CONFIG)
             st.markdown(
                 "<p class='caption-text'>Blue lines = major shipping lanes · "
                 "Bubble size = events · Color = fatalities</p>",
                 unsafe_allow_html=True,
             )
         else:
-            st.warning("Kolom koordinat tidak ditemukan di data konflik.")
+            st.warning("Coordinate columns not found in conflict data.")
 
     # ── Bar chart: events by country ──────────────────────────────────────────
     with col_bar:
@@ -277,7 +253,9 @@ with tab_general:
             showlegend=False,
         )
         st.plotly_chart(
-            fig_bar, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False}
+            fig_bar,
+            use_container_width=True,
+            config={**PLOTLY_CONFIG, "displayModeBar": False},
         )
 
     # ── Conflict Composition ──────────────────────────────────────────────────
@@ -330,7 +308,9 @@ with tab_general:
             showlegend=False,
         )
         st.plotly_chart(
-            fig_type, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False}
+            fig_type,
+            use_container_width=True,
+            config={**PLOTLY_CONFIG, "displayModeBar": False},
         )
 
     with col_line:
@@ -370,26 +350,23 @@ with tab_general:
             xaxis=dict(gridcolor="#152035"),
             yaxis=dict(gridcolor="#152035"),
         )
-        st.plotly_chart(fig_trend, width="stretch", config=PLOTLY_CONFIG)
+        st.plotly_chart(fig_trend, use_container_width=True, config=PLOTLY_CONFIG)
 
 
 with tab_yemen:
     # ══════════════════════════════════════════════════════════════════════════
     # MICRO VIEW — Yemen & Houthi Deep-Dive
     # ══════════════════════════════════════════════════════════════════════════
-    st.markdown("<br>", unsafe_allow_html=True)
-
     section_header(
         "Zooming In: Yemen & Houthi Deep-Dive",
         "Granular analysis of conflict sub-types — drone strikes, missile attacks, armed clashes",
         variant="deep-dive",
     )
     chart_note(
-        "This section intentionally stays focused on Yemen and only follows the selected year range, so the deep-dive remains comparable across filter changes."
+        "This section stays focused on Yemen and only follows the selected year range, so the deep-dive remains comparable across filter changes."
     )
 
-    # Yemen-specific slice (uses year range only, not country/event filters,
-    # because this section is always about Yemen)
+    # Yemen-specific slice (uses year range only, not country/event filters)
     yemen_filtered = df_conf[
         (df_conf["COUNTRY"] == "Yemen")
         & (df_conf["YEAR"] >= year_range[0])
@@ -465,7 +442,7 @@ with tab_yemen:
             )
             st.plotly_chart(
                 fig_sub,
-                width="stretch",
+                use_container_width=True,
                 config={**PLOTLY_CONFIG, "displayModeBar": False},
             )
 
@@ -494,7 +471,7 @@ with tab_yemen:
             )
             st.plotly_chart(
                 fig_sub_bar,
-                width="stretch",
+                use_container_width=True,
                 config={**PLOTLY_CONFIG, "displayModeBar": False},
             )
 
@@ -579,7 +556,7 @@ with tab_yemen:
             yaxis2=dict(title="Fatalities", gridcolor="rgba(0,0,0,0)"),
             hovermode="x unified",
         )
-        st.plotly_chart(fig_timeline, width="stretch", config=PLOTLY_CONFIG)
+        st.plotly_chart(fig_timeline, use_container_width=True, config=PLOTLY_CONFIG)
 
         # ── Word Cloud ────────────────────────────────────────────────────────
         section_header(
@@ -624,15 +601,14 @@ with tab_yemen:
                 ax_wc.axis("off")
                 fig_wc.patch.set_facecolor("#0b1628")
                 plt.tight_layout(pad=0)
-                st.pyplot(fig_wc, width="stretch")
+                st.pyplot(fig_wc, use_container_width=True)
             else:
                 st.info("No sub-event data available for the word cloud.")
 
         with col_wc_info:
             st.markdown(
                 """
-                
-                <div style='font-family:Plus Jakarta Sans,sans-serif; font-size:16px; color:85AEF0;
+                <div style='font-family:Plus Jakarta Sans,sans-serif; font-size:16px; color:#85AEF0;
                             font-weight:700; letter-spacing:1px; text-transform:uppercase;
                             margin-bottom:4px;'>Top Attack Types</div>
                 """,
@@ -658,7 +634,6 @@ with tab_yemen:
                     """,
                     unsafe_allow_html=True,
                 )
-            st.markdown("</div>", unsafe_allow_html=True)
 
 # ── Footer ────────────────────────────────────────────────────────────────
 page_footer()
