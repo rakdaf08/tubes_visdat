@@ -209,10 +209,6 @@ section_header(
     "Traffic Share: Pre vs Post-Crisis",
     "Distribution of ship crossings between Red Sea routes before and after Nov 2023",
 )
-chart_note(
-    "A 100% stacked comparison makes the route-share shift easier to read than separate donut charts."
-)
-
 red_sea_routes = ["Suez", "Bab-Al Mandab Strait", "Cape of Good Hope"]
 donut_routes = [r for r in red_sea_routes if r in active_passages]
 
@@ -269,7 +265,11 @@ with col_share:
             xaxis=dict(title=""),
             yaxis=dict(title="Share of Crossings", ticksuffix="%", range=[0, 100]),
         )
-        st.plotly_chart(fig_share, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
+        st.plotly_chart(
+            fig_share,
+            width="stretch",
+            config={**PLOTLY_CONFIG, "displayModeBar": False},
+        )
     else:
         st.info("No route-share data for the active passages.")
 
@@ -301,7 +301,9 @@ with col_qbar:
         xaxis=dict(gridcolor="#152035", title="Quarter", tickangle=-45),
         yaxis=dict(gridcolor="#152035", title="Crossings"),
     )
-    st.plotly_chart(fig_qbar, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
+    st.plotly_chart(
+        fig_qbar, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False}
+    )
 
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 3 — Conflict–Trade Correlation
@@ -310,10 +312,6 @@ section_header(
     "Conflict–Trade Correlation",
     "Direct comparison of Yemen conflict intensity vs Suez Canal traffic disruption over time",
 )
-chart_note(
-    "Both series are indexed to the first overlapping month, avoiding the visual distortion that can happen with dual-axis charts."
-)
-
 yemen_monthly2 = df_conf[df_conf["COUNTRY"] == "Yemen"].copy()
 yemen_monthly2["MONTH_DT"] = yemen_monthly2["WEEK"].dt.to_period("M").dt.to_timestamp()
 ym2 = yemen_monthly2.groupby("MONTH_DT")["EVENTS"].sum().reset_index()

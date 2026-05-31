@@ -140,7 +140,7 @@ _CUSTOM_CSS = """
 
     /* Section headers */
     .section-header {
-        margin: 32px 0 32px 0;
+        margin: 32px 0 16px 0;
     }
     .section-header h2 {
         margin-bottom: 4px;

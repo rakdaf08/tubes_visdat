@@ -276,17 +276,15 @@ with tab_general:
             yaxis=dict(gridcolor="rgba(0,0,0,0)"),
             showlegend=False,
         )
-        st.plotly_chart(fig_bar, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
+        st.plotly_chart(
+            fig_bar, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False}
+        )
 
     # ── Conflict Composition ──────────────────────────────────────────────────
     section_header(
         "Conflict Composition",
         "Distribution of conflict types across the filtered selection",
     )
-    chart_note(
-        "Bars are used here instead of a pie chart so users can compare event categories precisely, especially when values are close."
-    )
-
     col_type, col_line = st.columns([1, 2])
 
     with col_type:
@@ -295,11 +293,13 @@ with tab_general:
             .sum()
             .sort_values("EVENTS", ascending=True)
         )
-        type_data["EVENT_TYPE"] = type_data["EVENT_TYPE"].replace({
-            "Explosions/Remote violence": "Explosions/<br>Remote violence",
-            "Strategic developments": "Strategic<br>developments",
-            "Violence against civilians": "Violence<br>against civilians",
-        })
+        type_data["EVENT_TYPE"] = type_data["EVENT_TYPE"].replace(
+            {
+                "Explosions/Remote violence": "Explosions/<br>Remote violence",
+                "Strategic developments": "Strategic<br>developments",
+                "Violence against civilians": "Violence<br>against civilians",
+            }
+        )
         fig_type = go.Figure(
             go.Bar(
                 y=type_data["EVENT_TYPE"],
@@ -329,7 +329,9 @@ with tab_general:
             yaxis=dict(gridcolor="rgba(0,0,0,0)", title=""),
             showlegend=False,
         )
-        st.plotly_chart(fig_type, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
+        st.plotly_chart(
+            fig_type, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False}
+        )
 
     with col_line:
         trend_data = conf_filtered.copy()
@@ -455,11 +457,17 @@ with tab_yemen:
                 },
                 title=chart_title("Yemen: Top Attack Types and Cumulative Share"),
                 height=400,
-                xaxis=dict(gridcolor="#152035", tickangle=-35, tickfont=dict(size=10), title=""),
+                xaxis=dict(
+                    gridcolor="#152035", tickangle=-35, tickfont=dict(size=10), title=""
+                ),
                 yaxis=dict(gridcolor="#152035", title="Events"),
                 yaxis2=dict(title="Cumulative Share", range=[0, 105], ticksuffix="%"),
             )
-            st.plotly_chart(fig_sub, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
+            st.plotly_chart(
+                fig_sub,
+                width="stretch",
+                config={**PLOTLY_CONFIG, "displayModeBar": False},
+            )
 
         with col_b:
             sub_bar = sub_data.sort_values("EVENTS", ascending=True)
@@ -484,7 +492,11 @@ with tab_yemen:
                 yaxis=dict(gridcolor="rgba(0,0,0,0)"),
                 showlegend=False,
             )
-            st.plotly_chart(fig_sub_bar, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
+            st.plotly_chart(
+                fig_sub_bar,
+                width="stretch",
+                config={**PLOTLY_CONFIG, "displayModeBar": False},
+            )
 
         # ── Timeline ──────────────────────────────────────────────────────────
         section_header(
