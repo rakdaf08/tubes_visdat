@@ -94,7 +94,7 @@ _CUSTOM_CSS = """
     }
     [data-testid="stSidebar"] .stMarkdown p,
     [data-testid="stSidebar"] .stMarkdown li {
-        color: #85AEF0 !important;
+        color: #d0e6ff !important;
         font-size: 13px;
     }
     [data-testid="stSidebarNav"] {
@@ -289,6 +289,11 @@ _CUSTOM_CSS = """
         padding-left: 12px;
         padding-right: 12px;
     }
+    [data-testid="stPageLink"] a p,
+    [data-testid="stPageLink"] a span {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
     .main [data-testid="stPageLink"] a {
         border-radius: 9999px !important;
     }
@@ -393,7 +398,7 @@ def sidebar_brand() -> None:
         <div style='padding: 12px 0 8px 0;'>
             <div style='font-family: Plus Jakarta Sans, sans-serif; font-size: 18px;
                         font-weight: 800; color: #ffffff;'>Red Sea Crisis</div>
-            <div style='font-size: 11px; color: #85AEF0; margin-top: 4px;'>
+            <div style='font-size: 11px; color: #d0e6ff; margin-top: 4px;'>
                 Analytical Dashboard
             </div>
         </div>
@@ -401,7 +406,7 @@ def sidebar_brand() -> None:
         unsafe_allow_html=True,
     )
     st.markdown("---")
-    st.page_link("Overview.py", label="Overview")
+    st.page_link("main.py", label="Overview")
     st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis")
     st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact")
     st.page_link("pages/3_Economic_Impact.py", label="Economic Impact")

@@ -65,7 +65,7 @@ st.markdown(
         </h1>
         <p style='font-size:16px; color:#d9d9d9; margin-top:0px; padding-top:4px;
                   font-family: Plus Jakarta Sans, sans-serif;'>
-            UK containerised trade flows through global maritime passages &amp; the cost of rerouting
+            UK containerised trade flows (measured in TEU / Twenty-foot Equivalent Unit) through global maritime passages &amp; the cost of rerouting
         </p>
     </div>
     """,
@@ -441,7 +441,7 @@ if not df_hs2.empty:
 
         # Melt for grouped bar (one bar per year per product)
         hs2_melt = hs2_sorted.melt(
-            id_vars=["Product Category"],
+            id_vars=["Product Category", "Full Product Category"],
             value_vars=year_cols,
             var_name="Year",
             value_name="TEU",
@@ -466,9 +466,10 @@ if not df_hs2.empty:
             color_discrete_map=YEAR_COLORS,
             title=f"Top 10 Import Categories through {sel_hs2_passage} (TEU)",
             labels={"TEU": "TEU Volume", "Product Category": ""},
+            custom_data=["Full Product Category"]
         )
         fig_hs2.update_traces(
-            hovertemplate="<b>%{y}</b><br>Year: %{fullData.name}<br>TEU: %{x:,.0f}<extra></extra>"
+            hovertemplate="<b>%{customdata[0]}</b><br>Year: %{fullData.name}<br>TEU: %{x:,.0f}<extra></extra>"
         )
         fig_hs2.update_layout(
             **{
