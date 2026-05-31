@@ -406,7 +406,13 @@ def sidebar_brand() -> None:
         unsafe_allow_html=True,
     )
     st.markdown("---")
-    st.page_link("main.py", label="Overview")
+    try:
+        # If deployed on Streamlit Cloud with Overview.py as entrypoint
+        st.page_link("Overview.py", label="Overview")
+    except Exception:
+        # If run locally with main.py as entrypoint
+        st.page_link("main.py", label="Overview")
+        
     st.page_link("pages/1_Conflict_Analysis.py", label="Conflict Analysis")
     st.page_link("pages/2_Maritime_Impact.py", label="Maritime Impact")
     st.page_link("pages/3_Economic_Impact.py", label="Economic Impact")
