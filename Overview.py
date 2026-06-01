@@ -160,12 +160,16 @@ with col_spark:
         sm.columns = ["month", "suez_crossings"]
         merged = pd.merge(ym, sm, on="month", how="inner").sort_values("month")
 
-        def to_index(s):
-            baseline = s[s > 0].iloc[0] if (s > 0).any() else 1
+        def to_index(s, month_col):
+            mask = month_col == pd.Timestamp("2023-10-01")
+            if mask.any() and s[mask].iloc[0] > 0:
+                baseline = s[mask].iloc[0]
+            else:
+                baseline = s[s > 0].iloc[0] if (s > 0).any() else 1
             return s / baseline * 100
 
-        merged["Yemen Conflict Events"] = to_index(merged["yemen_events"])
-        merged["Suez Canal Crossings"] = to_index(merged["suez_crossings"])
+        merged["Yemen Conflict Events"] = to_index(merged["yemen_events"], merged["month"])
+        merged["Suez Canal Crossings"] = to_index(merged["suez_crossings"], merged["month"])
 
         corr_long = merged.melt(
             id_vars=["month", "yemen_events", "suez_crossings"],
@@ -201,10 +205,10 @@ with col_spark:
                 **PLOTLY_LAYOUT,
                 "legend": dict(
                     orientation="h",
-                    yanchor="bottom",
-                    y=1.02,
-                    xanchor="right",
-                    x=1,
+                    yanchor="top",
+                    y=-0.2,
+                    xanchor="center",
+                    x=0.5,
                     bgcolor="#080e1a",
                     bordercolor="#152035",
                     borderwidth=1,
@@ -217,7 +221,7 @@ with col_spark:
             yaxis=dict(gridcolor="#152035", title="Index (baseline = 100)"),
             hovermode="x unified",
         )
-        st.plotly_chart(fig_spark, use_container_width=True, config=PLOTLY_CONFIG)
+        st.plotly_chart(fig_spark, use_container_width=True, config={**PLOTLY_CONFIG, "displayModeBar": False})
     else:
         st.info("Suez crossing data not available.")
 

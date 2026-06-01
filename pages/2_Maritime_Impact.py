@@ -326,12 +326,16 @@ if not suez_monthly_df.empty:
     sm.columns = ["month", "suez_crossings"]
     merged = pd.merge(ym2, sm, on="month", how="inner").sort_values("month")
 
-    def to_index(series):
-        baseline = series[series > 0].iloc[0] if (series > 0).any() else 1
-        return series / baseline * 100
+    def to_index(s, month_col):
+        mask = month_col == pd.Timestamp("2023-10-01")
+        if mask.any() and s[mask].iloc[0] > 0:
+            baseline = s[mask].iloc[0]
+        else:
+            baseline = s[s > 0].iloc[0] if (s > 0).any() else 1
+        return s / baseline * 100
 
-    merged["Yemen conflict events"] = to_index(merged["yemen_events"])
-    merged["Suez crossings"] = to_index(merged["suez_crossings"])
+    merged["Yemen conflict events"] = to_index(merged["yemen_events"], merged["month"])
+    merged["Suez crossings"] = to_index(merged["suez_crossings"], merged["month"])
     corr_value = merged["yemen_events"].corr(merged["suez_crossings"])
     corr_label = "not enough overlap" if pd.isna(corr_value) else f"{corr_value:.2f}"
 
@@ -386,10 +390,10 @@ if not suez_monthly_df.empty:
             **PLOTLY_LAYOUT,
             "legend": dict(
                 orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="right",
-                x=1,
+                yanchor="top",
+                y=-0.2,
+                xanchor="center",
+                x=0.5,
                 bgcolor="#080e1a",
                 bordercolor="#152035",
                 borderwidth=1,
@@ -399,10 +403,10 @@ if not suez_monthly_df.empty:
         title=chart_title("Yemen Conflict Events vs Suez Crossings (Indexed)"),
         height=400,
         xaxis=dict(gridcolor="#152035", title="Month"),
-        yaxis=dict(gridcolor="#152035", title="Index (first overlapping month = 100)"),
+        yaxis=dict(gridcolor="#152035", title="Index (pre-crisis baseline = 100)"),
         hovermode="x unified",
     )
-    st.plotly_chart(fig_corr, width="stretch", config=PLOTLY_CONFIG)
+    st.plotly_chart(fig_corr, width="stretch", config={**PLOTLY_CONFIG, "displayModeBar": False})
     st.markdown(
         f"""
         <div class='insight-box'>
